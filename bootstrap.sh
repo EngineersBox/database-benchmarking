@@ -31,10 +31,21 @@ function postInitStage() {
             if [[ -z "$INVOKE_INIT" || "$INVOKE_INIT" != "true" ]]; then
                 return
             fi
-            echo "[INFO] Invoking cassandra initialisation"
+            echo "[INFO] Invoking Cassandra initialisation"
             set -a
             source /var/lib/cluster/node_env
             python3 ./init/cass.py
+            set +a
+            ;;
+        hbase)
+            # Only run once on node marked to handle it
+            if [[ -z "$INVOKE_INIT" || "$INVOKE_INIT" != "true" ]]; then
+                return
+            fi
+            echo "[INFO] Invoking HBase initialisation"
+            set -a
+            source /var/lib/cluster/node_env
+            python3 ./init/hbase.py
             set +a
             ;;
         *)

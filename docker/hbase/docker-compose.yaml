@@ -1,0 +1,65 @@
+services:
+  hbase:
+    container_name: hbase
+    # TODO: Should we build off latest 2.6.x or 3.0.0 beta release?
+    image: ghcr.io/engineersbox/hbase:2.6-metrics
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/cluster/config/hbase/hbase-site.xml:/etc/hbase/conf/hbase-site.xml
+      # NOTE: Created by provisioner
+      - /var/lib/cluster/config/hbase/regionservers:/etc/hbase/conf/regionservers
+      # NOTE: Created by provisioner
+      - /var/lib/cluster/config/hbase/backup-masters:/etc/hbase/conf/backup-masters
+    mem_limit: 16gb
+    memswap_limit: 16gb
+    mem_swappiness: 0
+    ports:
+      - 9000:9000
+      - 16010:16010
+      - 16020:16020
+      - 16030:16030
+      # TODO: Expose HBase, HDFS and ZK ports
+    env_file:
+      - path: /var/lib/cluster/node_env
+        required: true
+    network_mode: host
+  otel-hostmetrics:
+    container_name: otel-hostmetrics
+    image: otel/opentelemetry-collector-contrib:0.101.0
+    volumes:
+      - "/var/log/otel_hostmetrics:/var/log/otel"
+      - "/var/lib/cluster/config/otel/otel-instance-config.yaml:/etc/otelcol-contrib/config.yaml"
+      - /var/run/docker.sock:/var/run/docker.sock 
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup 
+      - /etc:/hostfs/etc 
+      - /etc:/etc
+      - /var/cache:/hostfs/cache 
+      - /usr/src:/hostfs/usr/src 
+      - /lib/modules:/hostfs/lib/modules 
+      - /boot:/boot
+      - /snap:/snap
+      - /:/hostfs
+      - /proc:/hostfs/proc
+    env_file:
+      - path: /var/lib/cluster/node_env
+        required: true
+    network_mode: host
+    pid: host
+    privileged: true
+  otel-kernel:
+    container_name: otel-kernel
+    image: otel/opentelemetry-ebpf-kernel-collector:v0.10.2
+    command: ["--log-console"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup 
+      - /etc:/hostfs/etc 
+      - /var/cache:/hostfs/cache 
+      - /usr/src:/hostfs/usr/src 
+      - /lib/modules:/hostfs/lib/modules 
+    env_file:
+      - path: /var/lib/cluster/node_env
+        required: true
+    network_mode: host
+    pid: host
+    privileged: true
