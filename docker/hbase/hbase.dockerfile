@@ -72,7 +72,7 @@ RUN if [ "x$COMMIT" != "x" ]; then git checkout "$COMMIT"; fi
 # Build the artifacts
 RUN MAVEN_OPTS="-Xmx2g" mvn clean site install assembly:assembly -DskipTests -Prelease
 RUN export BASE_VERSION=$(xmllint --xpath 'string(/project/version/@value)' pom.xml) \
-    && tar -xvf "build/apache-hbase-$BASE_VERSION-SNAPSHOT-bin.tar.gz" --directory=/var/lib \
+    && tar -xvzf "build/apache-hbase-$BASE_VERSION-SNAPSHOT-bin.tar.gz" --directory=/var/lib \
     && mv /var/lib/apache-hbase-$BASE_VERSION-SNAPSHOT /var/lib/hbase/
 RUN rm -rf /var/lib/hbase/conf
 RUN mkdir -p /var/lib/hbase/logs
