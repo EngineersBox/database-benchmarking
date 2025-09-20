@@ -1,0 +1,30 @@
+<configuration>
+    <property>
+        <name>hbase.rootdir</name>
+        <value>/etc/hbase</value>
+    </property>
+    <property>
+        <name>hbase.cluster.distributed</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hbase.client.max.total.tasks</name>
+        <value>@@CLIENT_MAX_TOTAL_TASKS@@</value>
+    </property>
+    <property>
+        <name>hbase.client.max.perserver.tasks</name>
+        <value>@@CLIENT_MAX_PER_SERVER_TASKS@@</value>
+    </property>
+    <property>
+        <name>hbase.client.max.perregion.tasks</name>
+        <value>@@CLIENT_MAX_PER_REGION_TASKS@@</value>
+    </property>
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>@@ZK_NODE_IPS@@</value>
+    </property>
+    <property>
+        <name>hbase.zookeeper.property.dataDir</name>
+        <value>/etc/zookeeper</value>
+    </property>
+</configuration>

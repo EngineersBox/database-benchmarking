@@ -1,8 +1,8 @@
 FROM debian:bookworm-slim
 LABEL org.opencontainers.image.source https://github.com/EngineersBox/database-benchmarking
 
-ARG REPOSITORY="https://github.com/EngineersBox/cassandra.git"
-ARG BRANCH="cassandra-5.0"
+ARG REPOSITORY="https://github.com/EngineersBox/hbase.git"
+ARG BRANCH="hbase-2.6"
 ARG COMMIT=""
 ARG UID=1000
 ARG GID=1000
@@ -13,8 +13,8 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
 
 # explicitly set user/group IDs
 RUN set -eux \
-	&& groupadd --system --gid=$UID cassandra \
-	&& useradd --system --create-home --shell=/bin/bash --gid=cassandra --uid=$GID cassandra
+	&& groupadd --system --gid=$UID hbase \
+	&& useradd --system --create-home --shell=/bin/bash --gid=cassandra --uid=$GID hbase
 
 RUN apt-get update \
     && apt-get install -y build-essential \
@@ -64,45 +64,46 @@ RUN echo 'export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")' 
 ARG CACHEBUST=0
 
 WORKDIR /var/lib
-RUN git clone "$REPOSITORY" cassandra_repo
+RUN git clone "$REPOSITORY" hbase_repo
 
-WORKDIR /var/lib/cassandra_repo
+WORKDIR /var/lib/hbase_repo
 RUN git checkout "$BRANCH"
 RUN if [ "x$COMMIT" != "x" ]; then git checkout "$COMMIT"; fi
 # Build the artifacts
-RUN ant artifacts
-# Untar everything into the correct place
-RUN export BASE_VERSION=$(xmllint --xpath 'string(/project/property[@name="base.version"]/@value)' build.xml) \
-    && tar -xvf "build/apache-cassandra-$BASE_VERSION-SNAPSHOT-bin.tar.gz" --directory=/var/lib \
-    && mv /var/lib/apache-cassandra-$BASE_VERSION-SNAPSHOT /var/lib/cassandra
-# We will mount the config into the container later in a different location
-RUN rm -rf /var/lib/cassandra/conf
-RUN mkdir -p /var/lib/cassandra/logs
-RUN chown -R cassandra:cassandra /var/lib/cassandra
+RUN MAVEN_OPTS="-Xmx2g" mvn clean site install assembly:assembly -DskipTests -Prelease
+RUN export BASE_VERSION=$(xmllint --xpath 'string(/project/version/@value)' pom.xml) \
+    && tar -xvf "build/apache-hbase-$BASE_VERSION-SNAPSHOT-bin.tar.gz" --directory=/var/lib \
+    && mv /var/lib/apache-hbase-$BASE_VERSION-SNAPSHOT /var/lib/hbase/
+RUN rm -rf /var/lib/hbase/conf
+RUN mkdir -p /var/lib/hbase/logs
+RUN chown -R hbase:hbase /var/lib/hbase
 
 WORKDIR /
-RUN rm -rf /var/lib/cassandra_repo
+RUN rm -rf /var/lib/hbase_repo
 
-ENV CASSANDRA_HOME /var/lib/cassandra
-ENV CASSANDRA_CONF /etc/cassandra
-ENV PATH $CASSANDRA_HOME/bin:$PATH
+ENV HBASE_HOME /var/lib/hbase
+ENV HBASE_CONF_DIR /etc/hbase
+ENV PATH $HBASE_HOME/bin:$PATH
 
 WORKDIR /var/lib
 RUN mkdir -p otel
 WORKDIR /var/lib/otel
 RUN wget "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/$OTEL_COLLECTOR_JAR_VERSION/opentelemetry-javaagent.jar"
 RUN wget "https://github.com/open-telemetry/opentelemetry-java-contrib/releases/download/$OTEL_JMX_JAR_VERSION/opentelemetry-jmx-metrics.jar"
-RUN chown -R cassandra:cassandra /var/lib/otel
+RUN chown -R hbase:hbase /var/lib/otel
 
 WORKDIR /
 # COPY ../../scripts/docker-entrypoint.sh /usr/local/bin
 # ENTRYPOINT ["docker-entrypoint.sh"]
 
-USER cassandra
-# 7000: intra-node communication
-# 7001: TLS intra-node communication
-# 7199: JMX
-# 9042: CQL
-# 9160: thrift service
-EXPOSE 7000 7001 7199 9042 9160
-CMD ["cassandra", "-f"]
+USER hbase
+# 16000: HMaster
+# 16010: HMaster info web UI
+# 16020: RegionServer
+# 16030: RegionServer
+# 8080: REST server
+# 8085: REST server web UI
+# 9090: Thrift server
+# 9095: Thrift server
+EXPOSE 16000 16010 16020 16030 8080 8085 9090 9095
+CMD ["/var/lib/hbase/bin/start-hbase.sh"]
