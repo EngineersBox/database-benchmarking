@@ -40,3 +40,15 @@ sudo mv "hadoop-$VERSION" /var/lib/hadoop
 sudo mkdir /var/lib/hadoop/logs
 
 sudo chown -R hadoop:hadoop /var/lib/hadoop
+
+cat >> ~/.bashrc << EOF
+export HADOOP_HOME=/var/lib/hadoop
+export HADOOP_INSTALL=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
+EOF
