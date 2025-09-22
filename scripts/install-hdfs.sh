@@ -25,7 +25,18 @@ sudo usermod -aG sudo hadoop
 sudo -u hadoop ssh-keygen -t rsa -P "" -f ~/.ssh/id_rsa
 sudo -u hadoop chmod 700 ~/.ssh
 sudo -u hadoop chmod 600 ~/.ssh/authorized_keys
-echo "ssh" | sudo tee /etc/pdsh/rcmd_default
+echo "ssh" | sudo tee -a /etc/pdsh/rcmd_default > /dev/null
+
+# Create the HDFS mount if necessary
+if test -b /dev/sdb && ! grep -q /dev/sdb /etc/fstab; then
+    sudo mke2fs -F -j /dev/sdb
+    sudo mount /dev/sdb /mnt
+    sudo chmod 755 /mnt
+    echo "/dev/sdb      /mnt    ext3    defaults,nofail 0       2" | sudo tee -a /etc/fstab > /dev/null
+fi
+
+sudo mkdir /mnt/hadoop
+sudo chmod 1777 /mnt/hadoop
 
 # Pull hadoop release
 wget "https://downloads.apache.org/hadoop/common/hadoop-$VERSION/hadoop-$VERSION-lean.tar.gz"

@@ -5,7 +5,6 @@ from cassandra.cluster import Cluster, Host
 
 logging.basicConfig(format="[%(levelname)s] %(name)s :: %(message)s", level=logging.DEBUG)
 
-
 CONNECT_RETRY_DELAY_SECONDS = 10
 
 def filterUpHosts(hosts: list[Host]) -> list[Host]:
@@ -45,7 +44,7 @@ def checkHosts(node_ips: list[str], contact_points: list[str]) -> bool:
     return False
 
 def mainCassandra() -> None:
-    node_ips = os.environ["CASSANDRA_NODE_IPS"].split(",")
+    node_ips = os.environ["NODE_IPS"].split(",")
     contact_points = node_ips[:min(len(node_ips), 3)]
     logging.debug(f"Retry  delay set to {CONNECT_RETRY_DELAY_SECONDS} seconds")
     while (not checkHosts(node_ips, contact_points)):
@@ -55,20 +54,24 @@ def mainCassandra() -> None:
     time.sleep(60)
     logging.info("Succeeded")
 
+def mainHBase() -> None:
+    pass
+
+def mainElasticsearch() -> None:
+    pass
+
 def mainMongoDB() -> None:
     pass
 
 def mainScylla() -> None:
     pass
 
-def mainElasticsearch() -> None:
-    pass
-
 class ApplicationVariant(Enum):
     CASSANDRA = "cassandra", mainCassandra
+    ELASTICSEARCH = "elasticsearch", mainElasticsearch
+    HBASE = "hbase", mainHBase
     MONGO_DB = "mongo_db", mainMongoDB
     SCYLLA = "scylla", mainScylla
-    ELASTICSEARCH = "elasticsearch", mainElasticsearch
     OTEL_COLLECTOR = "otel_collector", None
 
     def isProvisionable(self) -> bool:
