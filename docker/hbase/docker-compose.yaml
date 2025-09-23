@@ -1,24 +1,23 @@
 services:
   hbase:
     container_name: hbase
-    # TODO: Should we build off latest 2.6.x or 3.0.0 beta release?
     image: ghcr.io/engineersbox/hbase:2.6-metrics
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/cluster/config/hbase/hbase-site.xml:/etc/hbase/conf/hbase-site.xml
-      # NOTE: Created by provisioner
-      - /var/lib/cluster/config/hbase/regionservers:/etc/hbase/conf/regionservers
-      # NOTE: Created by provisioner
-      - /var/lib/cluster/config/hbase/backup-masters:/etc/hbase/conf/backup-masters
+      - /var/lib/cluster/logs:/etc/hbase/logs
+      - /var/lib/cluster/config/hbase:/etc/hbase/conf
     mem_limit: 16gb
     memswap_limit: 16gb
     mem_swappiness: 0
     ports:
-      - 9000:9000
-      - 16010:16010
+      - 16000:16000
+      - 16010:16010 
       - 16020:16020
       - 16030:16030
-      # TODO: Expose HBase, HDFS and ZK ports
+      - 8080:8080
+      - 8085:8085
+      - 9090:9090
+      - 9095:9095
     env_file:
       - path: /var/lib/cluster/node_env
         required: true

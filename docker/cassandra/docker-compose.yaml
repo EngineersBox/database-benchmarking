@@ -7,7 +7,6 @@ services:
       - "/var/lib/cluster/logs:/var/log/cassandra" 
       - "/var/lib/cluster/config/cassandra/otel.properties:/etc/otel/otel.properties" 
       - "/var/lib/cluster/config/cassandra:/etc/cassandra" 
-      - "/var/lib/cluster/config/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml" 
       - "/var/lib/cluster/data:/var/lib/cassandra/data" 
     mem_limit: 16gb
     memswap_limit: 16gb
