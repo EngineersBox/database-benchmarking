@@ -1,7 +1,10 @@
 import groovy.jmx.GroovyMBean
 import groovy.transform.EqualsAndHashCode
 import javax.management.ObjectName
+import java.lang.Runnable
+import java.io.File
 import java.util.ArrayList
+import java.util.Properties
 import java.util.concurrent.TimeUnit
 
 /* =============================
@@ -275,11 +278,11 @@ def instrumentMBeans() {
 }
 
 /* =============================
- *          CASSANDRA
+ *         APPLICATIONS
  * =============================
  */
 
-def cacheCassandraMBeans() {
+def cassandra() {
   def nameMappings = [
       "org.apache.cassandra.metrics": "cassandra",
       "org.apache.cassandra.metrics.scheduler": "cassandra_scheduler"
@@ -291,6 +294,10 @@ def cacheCassandraMBeans() {
   cacheMBeans("org.apache.cassandra.metrics.scheduler:type=SEPWorker,*", nameMappings)
   cacheMBeans("org.apache.cassandra.metrics:type=StorageProxy,*", nameMappings)
   //cacheMBeans("org.apache.cassandra.metrics:type=ColumnFamily,*", nameMappings)
+}
+
+def hbase() {
+    // TODO: Implement this
 }
 
 /* =============================
@@ -333,12 +340,27 @@ def cacheJVMMBeans() {
  */
 
 def instrument() {
+    final Properties properties = new Properties();
+    new File("/otel-lgtm/jmx-beans.properties").withInputStream({
+        properties.load(it);
+    })
+    final String application = properties.getProperty("application");
+    if (application == null) {
+        throw new IllegalStateException("Execpted an 'application' property");
+    }
+    final Closure applicationFn =[
+        "cassandra": { -> cassandra() },
+        "hbase": { -> hbase() },
+    ][application];
+    if (applicationFn == null) {
+        throw new IllegalStateException("Unknown application: $application")
+    }
     //final long now = System.nanoTime();
     //if (now - Cache.lastPoll >= Cache.pollFreq) {
     if (Cache.mbeanMappings.isEmpty()) {
         //Cache.lastPoll = now;
-        cacheCassandraMBeans()
-        cacheJVMMBeans()
+        applicationFn();
+        cacheJVMMBeans();
         Cache.printCache();
     }
     instrumentMBeans()
