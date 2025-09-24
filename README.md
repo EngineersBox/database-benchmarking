@@ -27,6 +27,74 @@ The image can then be pushed to the GitHub container repository
 docker push ghcr.io/engineersbox/cassandra:5.0
 ```
 
+### HBase
+
+You'll need to create a `settings.xml` file to use with the following contents to configure the maven's access to the GitHub repo for Kairos. Make sure to fill out the `USER` and `TOKEN` templates:
+
+> ![NOTE]
+> The `settings.xml` file in the image is removed after the hbase build has completed.
+> This ensures that no credentials are persisted in the image itself.
+
+```xml
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <activeProfiles>
+        <activeProfile>gh-kairos</activeProfile>
+    </activeProfiles>
+
+    <profiles>
+        <profile>
+            <id>gh-kairos</id>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                </repository>
+                <repository>
+                    <id>gh-kairos</id>
+                    <url>https://maven.pkg.github.com/engineersbox/kairos</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
+    <servers>
+        <server>
+            <id>gh-kairos</id>
+            <username>USER</username>
+            <password>TOKEN</password>
+        </server>
+    </servers>
+</settings>
+```
+
+Then build the image via:
+
+```bash
+docker build -t ghcr.io/engineersbox/hbase:2.6.3-kairos -f docker/hbase/hbase.dockerfile .
+```
+
+You can optionally supply a repo and commit-ish marker to build from:
+
+* `--build-arg="REPOSITORY=<repo>"` defaulting to <https://github.com/engineersbox/hbase>
+* `--build-arg="COMMIT_ISH=<commit | branch | tag>"` defaulting to `2.6.3-kairos`
+* `--build-arg="UID=<hbase user uid>"` defaulting to `1000`
+* `--build-arg="GID=<hbase group id>"` defaulting to `1000`
+* `--build-arg="OTEL_COLLECTOR_JAR_VERSION=<version>"` defaulting to `v2.2.0`
+* `--build-arg="OTEL_JMX_JAR_VERSION=<version>"` defaulting to `v1.32.0`
+* `--build-arg="M2_SETTINGS_PATH=<host relative path>"` defaulting to `settings.xml`
+
+The image can then be pushed to the GitHub container repository
+
+```bash
+docker push ghcr.io/engineersbox/hbase:2.6.3-kairos
+```
+
 ## OpenTelemetry Collector
 
 ```bash

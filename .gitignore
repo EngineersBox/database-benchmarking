@@ -4,6 +4,7 @@ opentelemetry-*.jar
 /cassandra
 **/*.pyc
 venv/
+settings.xml
 
 # Added by cargo
 

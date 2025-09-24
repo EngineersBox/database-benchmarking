@@ -2,12 +2,13 @@ FROM debian:bookworm-slim
 LABEL org.opencontainers.image.source https://github.com/EngineersBox/database-benchmarking
 
 ARG REPOSITORY="https://github.com/EngineersBox/hbase.git"
-ARG BRANCH="kairos-2.6"
+ARG BRANCH="2.6.3-kairos"
 ARG COMMIT=""
 ARG UID=1000
 ARG GID=1000
 ARG OTEL_COLLECTOR_JAR_VERSION=v2.6.0
 ARG OTEL_JMX_JAR_VERSION=v1.35.0
+ARG M2_SETTINGS_PATH="settings.xml"
 
 RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
 
@@ -57,7 +58,6 @@ RUN apt-get update \
 RUN ln -sT "$(readlink -e /usr/lib/*/libjemalloc.so.2)" /usr/local/lib/libjemalloc.so \
 	&& ldconfig
 
-RUN update-java-alternatives --set /usr/lib/jvm/java-1.17.0-openjdk-amd64
 RUN echo 'export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")' >> ~/.bashrc
 
 # Docker cache avoidance to detect new commits
@@ -69,8 +69,16 @@ RUN git clone "$REPOSITORY" hbase_repo
 WORKDIR /var/lib/hbase_repo
 RUN git checkout "$BRANCH"
 RUN if [ "x$COMMIT" != "x" ]; then git checkout "$COMMIT"; fi
+
+# Maven settings for auth to repos
+COPY ["$M2_SETTINGS_PATH", "/opt/.m2/"]
+
 # Build the artifacts
-RUN MAVEN_OPTS="-Xmx2g" mvn clean site install assembly:assembly -DskipTests -Prelease
+RUN MAVEN_OPTS="-Xmx2g" mvn -s /opt/.m2/settings.xml clean site install assembly:single -DskipTests -Prelease
+
+# Remove maven settings to avoid caching creds in image
+RUN rm -f /opt/.m2/settings.xml
+
 RUN export BASE_VERSION=$(xmllint --xpath 'string(/project/version/@value)' pom.xml) \
     && tar -xvzf "build/apache-hbase-$BASE_VERSION-SNAPSHOT-bin.tar.gz" --directory=/var/lib \
     && mv /var/lib/apache-hbase-$BASE_VERSION-SNAPSHOT /var/lib/hbase/
