@@ -2,7 +2,7 @@ FROM debian:bookworm-slim
 LABEL org.opencontainers.image.source https://github.com/EngineersBox/database-benchmarking
 
 ARG REPOSITORY="https://github.com/EngineersBox/hbase.git"
-ARG BRANCH="hbase-2.6"
+ARG BRANCH="kairos-2.6"
 ARG COMMIT=""
 ARG UID=1000
 ARG GID=1000
@@ -14,7 +14,7 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
 # explicitly set user/group IDs
 RUN set -eux \
 	&& groupadd --system --gid=$UID hbase \
-	&& useradd --system --create-home --shell=/bin/bash --gid=cassandra --uid=$GID hbase
+	&& useradd --system --create-home --shell=/bin/bash --gid=hbase --uid=$GID hbase
 
 RUN apt-get update \
     && apt-get install -y build-essential \
@@ -45,7 +45,7 @@ RUN apt-get update \
         openjdk-17-jdk \
         openjdk-17-jre \
         git \
-        ant \
+        maven \
         libxml2-utils \
         libjemalloc2 \
         procps \
