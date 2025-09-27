@@ -4,4 +4,4 @@ Description=Node bootstrapping
 [Service]
 Type=oneshot
 User=cluster
-ExecStart=+/bin/bash /var/lib/cluster/bootstrap.sh
+ExecStart=+/bin/python3 /var/lib/cluster/init/bootstrap/bootstrap.py

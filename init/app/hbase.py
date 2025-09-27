@@ -1,6 +1,6 @@
 import os, subprocess
 from enum import Enum
-from typing import Callable, Optional 
+from typing import Any, Callable, Optional 
 
 def hdfsStartNameNode() -> None:
     commands = [
@@ -75,15 +75,12 @@ class HBaseNodeRole(Enum):
     def appType(self) -> HBaseAppType:
         return self.value[1]
 
-def main():
-    env_node_roles: list[str] = os.environ["NODE_ROLES"].replace("(", "").replace(")", "").split(" ")
-    for raw_role in env_node_roles:
+def main(config: dict[str, Any]):
+    node_roles: list[str] = config["NODE_ROLES"]
+    for raw_role in node_roles:
         if (raw_role not in HBaseNodeRole._member_names_):
-            raise RuntimeError(f"Unknown role specified in NODE_ROLES env var: {env_node_roles}")
+            raise RuntimeError(f"Unknown role specified in NODE_ROLES: {node_roles}")
         role = HBaseNodeRole[raw_role.upper()]
         init = role.initFunction()
         if (init != None):
             init()
-
-if __name__ == "__main__":
-    main()

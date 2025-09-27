@@ -74,7 +74,8 @@ RUN if [ "x$COMMIT" != "x" ]; then git checkout "$COMMIT"; fi
 COPY ["$M2_SETTINGS_PATH", "/opt/.m2/"]
 
 # Build the artifacts
-RUN MAVEN_OPTS="-Xmx2g" mvn -s /opt/.m2/settings.xml clean site install assembly:single -DskipTests -Prelease
+RUN mvn -s /opt/.m2/settings.xml clean package -DskipTests
+RUN mvn -s /opt/.m2/settings.xml assembly:single -DskipTests -Dhadoop.profile=3.0
 
 # Remove maven settings to avoid caching creds in image
 RUN rm -f /opt/.m2/settings.xml

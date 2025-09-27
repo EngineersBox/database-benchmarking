@@ -2,25 +2,26 @@
 #       it will conflict with the cassandra-driver dependecy
 #       which is also named 'cassandra' as a module.
 import os, time, random, logging
+from typing import Any
 from cassandra.cluster import Cluster
 
 logging.basicConfig(format="[%(levelname)s] %(name)s :: %(message)s", level=logging.DEBUG)
 
 MAX_RETRIES=10
 
-def constructReplication() -> str:
+def constructReplication(config: dict[str, Any]) -> str:
     rf = ""
-    for i in range(int(os.environ["DC_COUNT"])):
-        rf += f"\t'dc-{i}': {os.environ['YCSB_RF']},\n"
+    for i in range(int(config["DC_COUNT"])):
+        rf += f"\t'dc-{i}': {config["YCSB_RF"]},\n"
     return rf.removesuffix(",\n").removeprefix("\t")
 
-def main() -> None:
+def main(config: dict[str, Any]) -> None:
     retry_delay = 1
     for attempt in range(MAX_RETRIES):
         session = None
         try:
             logging.info("Connecting to Cassandra cluster [Attempt: %d/%d]", attempt + 1, MAX_RETRIES)
-            cluster = Cluster(contact_points=[os.environ["NODE_IP"]])
+            cluster = Cluster(contact_points=config["NODE_IP"])
             session = cluster.connect()
             logging.info("Established connection to Cassandra cluster")
         except:
@@ -32,7 +33,7 @@ def main() -> None:
         logging.info("Creating YCSB keyspace")
         session.execute(f"""create keyspace ycsb with replication = {{
             'class': 'NetworkTopologyStrategy',
-            {constructReplication()}
+            {constructReplication(config)}
         }};""")
         logging.info("Creating usertable in YCSB keyspace")
         session.execute(f"""create table ycsb.usertable (
@@ -55,6 +56,3 @@ def main() -> None:
         and memtable = 'trie';""")
         return
     raise ConnectionRefusedError(f"Exceeded max retries ({MAX_RETRIES}) attempting to connect to Cassandra cluster")
-
-if __name__ == "__main__":
-    main()

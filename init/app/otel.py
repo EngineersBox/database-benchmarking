@@ -1,6 +1,6 @@
 from enum import Enum
 import os, time, logging
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 from cassandra.cluster import Cluster, Host
 
 logging.basicConfig(format="[%(levelname)s] %(name)s :: %(message)s", level=logging.DEBUG)
@@ -43,8 +43,8 @@ def checkHosts(node_ips: list[str], contact_points: list[str]) -> bool:
     cluster.shutdown()
     return False
 
-def mainCassandra() -> None:
-    node_ips = os.environ["NODE_IPS"].split(",")
+def mainCassandra(config: dict[str, Any]) -> None:
+    node_ips = config["NODE_IPS"]
     contact_points = node_ips[:min(len(node_ips), 3)]
     logging.debug(f"Retry  delay set to {CONNECT_RETRY_DELAY_SECONDS} seconds")
     while (not checkHosts(node_ips, contact_points)):
@@ -54,16 +54,16 @@ def mainCassandra() -> None:
     time.sleep(60)
     logging.info("Succeeded")
 
-def mainHBase() -> None:
+def mainHBase(config: dict[str, Any]) -> None:
     pass
 
-def mainElasticsearch() -> None:
+def mainElasticsearch(config: dict[str, Any]) -> None:
     pass
 
-def mainMongoDB() -> None:
+def mainMongoDB(config: dict[str, Any]) -> None:
     pass
 
-def mainScylla() -> None:
+def mainScylla(config: dict[str, Any]) -> None:
     pass
 
 class ApplicationVariant(Enum):
@@ -77,20 +77,17 @@ class ApplicationVariant(Enum):
     def isProvisionable(self) -> bool:
         return self.value[1] != None
 
-    def mainMethod(self) -> Callable[[], None]:
+    def mainMethod(self) -> Callable[[dict[str, Any]], None]:
         if (self.value[1] == None):
             raise ValueError(f"Variant is non-provisionable: {self.name}")
         return self.value[1]
 
-def main() -> None:
-    env_cluster_application_variant = os.environ["CLUSTER_APPLICATION_VARIANT"].upper()
+def main(config: dict[str, Any]) -> None:
+    env_cluster_application_variant = config["CLUSTER_APPLICATION_VARIANT"].upper()
     if (env_cluster_application_variant not in ApplicationVariant._member_names_):
         raise RuntimeError(f"Unknown variant specified in CLUSTER_APPLICATION_VARIANT env var: {env_cluster_application_variant}")
     app_variant: ApplicationVariant = ApplicationVariant(ApplicationVariant._member_map_[env_cluster_application_variant])
     if (not app_variant.isProvisionable()):
         raise ValueError(f"CLUSTER_APPLICATION_VARIANT is {env_cluster_application_variant} which is not provisionable and thus cannot be interfaced with")
-    callable: Callable[[], None] = app_variant.mainMethod()
-    callable()
-
-if __name__ == "__main__":
-    main()
+    callable: Callable[[dict[str, Any]], None] = app_variant.mainMethod()
+    callable(config)
