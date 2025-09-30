@@ -1,7 +1,7 @@
 # NOTE: This file is named 'cass' and not 'cassandra' since
 #       it will conflict with the cassandra-driver dependecy
 #       which is also named 'cassandra' as a module.
-import os, time, random, logging
+import time, random, logging
 from typing import Any
 from cassandra.cluster import Cluster
 
@@ -15,7 +15,7 @@ def constructReplication(config: dict[str, Any]) -> str:
         rf += f"\t'dc-{i}': {config["YCSB_RF"]},\n"
     return rf.removesuffix(",\n").removeprefix("\t")
 
-def main(config: dict[str, Any]) -> None:
+def postInit(config: dict[str, Any]) -> None:
     retry_delay = 1
     for attempt in range(MAX_RETRIES):
         session = None

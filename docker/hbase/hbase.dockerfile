@@ -12,77 +12,84 @@ ARG M2_SETTINGS_PATH="settings.xml"
 
 RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
 
-# explicitly set user/group IDs
+# Explicitly set user/group IDs
 RUN set -eux \
 	&& groupadd --system --gid=$UID hbase \
 	&& useradd --system --create-home --shell=/bin/bash --gid=hbase --uid=$GID hbase
 
-RUN apt-get update \
-    && apt-get install -y build-essential \
-        gcc \
-        g++ \
-        gdb \
-        clang-15 \
-        clangd-15 \
-        make \
-        ninja-build \
-        autoconf \
-        automake \
-        libtool \
-        valgrind \
-        locales-all \
-        dos2unix \
-        rsync \
-        tar \
-        python3 \
-        python3-pip \
-        python3-dev \
-        git \
-        unzip \
-        wget \
-        gpg \
-        ca-certificates \
-        openssl \
-        openjdk-17-jdk \
-        openjdk-17-jre \
-        git \
-        maven \
-        libxml2-utils \
-        libjemalloc2 \
-        procps \
-        iproute2 \
-        numactl \
-        iptables \
-    && apt-get clean
+RUN apt-get update -y
+RUN apt-get install -y \
+    build-essential \
+    gcc \
+    g++ \
+    gdb \
+    clang-15 \
+    clangd-15 \
+    make \
+    ninja-build \
+    autoconf \
+    automake \
+    libtool \
+    valgrind \
+    locales-all \
+    dos2unix \
+    rsync \
+    tar \
+    python3 \
+    python3-pip \
+    python3-dev \
+    git \
+    unzip \
+    wget \
+    gpg \
+    ca-certificates \
+    openssl \
+    openjdk-17-jdk \
+    openjdk-17-jre \
+    git \
+    maven \
+    libxml2-utils \
+    libjemalloc2 \
+    procps \
+    iproute2 \
+    numactl \
+    iptables
+RUN apt-get clean
 
-RUN ln -sT "$(readlink -e /usr/lib/*/libjemalloc.so.2)" /usr/local/lib/libjemalloc.so \
-	&& ldconfig
+RUN ln -sT "$(readlink -e /usr/lib/*/libjemalloc.so.2)" /usr/local/lib/libjemalloc.so
+RUN ldconfig
 
 RUN echo 'export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")' >> ~/.bashrc
 
 # Docker cache avoidance to detect new commits
 ARG CACHEBUST=0
 
-WORKDIR /var/lib
-RUN git clone "$REPOSITORY" hbase_repo
+# WORKDIR /var/lib
+# RUN git clone "$REPOSITORY" hbase_repo
 
 WORKDIR /var/lib/hbase_repo
-RUN git checkout "$BRANCH"
-RUN if [ "x$COMMIT" != "x" ]; then git checkout "$COMMIT"; fi
+# RUN git checkout "$BRANCH"
+# RUN if [ "x$COMMIT" != "x" ]; then git checkout "$COMMIT"; fi
+#
+# # Maven settings for auth to repos
+# COPY ["$M2_SETTINGS_PATH", "/opt/.m2/"]
+#
+# # Build the artifacts
+# RUN mvn -s /opt/.m2/settings.xml clean package -DskipTests
+# FIXME: This fails for some reason
+# RUN mvn -s /opt/.m2/settings.xml assembly:single -DskipTests -Dhadoop.profile=3.0
+#
+# # Remove maven settings to avoid caching creds in image
+# RUN rm -f /opt/.m2/settings.xml
+#
+# RUN export BASE_VERSION=$(xmllint --xpath 'string(/project/version/@value)' pom.xml)
+# RUN tar -xvzf "build/apache-hbase-$BASE_VERSION-SNAPSHOT-bin.tar.gz" --directory=/var/lib
+# RUN mv /var/lib/apache-hbase-$BASE_VERSION-SNAPSHOT /var/lib/hbase/
 
-# Maven settings for auth to repos
-COPY ["$M2_SETTINGS_PATH", "/opt/.m2/"]
-
-# Build the artifacts
-RUN mvn -s /opt/.m2/settings.xml clean package -DskipTests
-RUN mvn -s /opt/.m2/settings.xml assembly:single -DskipTests -Dhadoop.profile=3.0
-
-# Remove maven settings to avoid caching creds in image
-RUN rm -f /opt/.m2/settings.xml
-
-RUN export BASE_VERSION=$(xmllint --xpath 'string(/project/version/@value)' pom.xml) \
-    && tar -xvzf "build/apache-hbase-$BASE_VERSION-SNAPSHOT-bin.tar.gz" --directory=/var/lib \
-    && mv /var/lib/apache-hbase-$BASE_VERSION-SNAPSHOT /var/lib/hbase/
+RUN wget "https://dlcdn.apache.org/hbase/2.6.3/hbase-2.6.3-hadoop3-bin.tar.gz"
+RUN tar -xvzf "hbase-2.6.3-hadoop3-bin.tar.gz" --directory=/var/lib
+RUN mv /var/lib/hbase-2.6.3-hadoop3 /var/lib/hbase
+RUN rm -f "hbase-2.6.3-hadoop3-bin.tar.gz"
 RUN rm -rf /var/lib/hbase/conf
 RUN mkdir -p /var/lib/hbase/logs
 RUN chown -R hbase:hbase /var/lib/hbase
@@ -102,8 +109,6 @@ RUN wget "https://github.com/open-telemetry/opentelemetry-java-contrib/releases/
 RUN chown -R hbase:hbase /var/lib/otel
 
 WORKDIR /
-# COPY ../../scripts/docker-entrypoint.sh /usr/local/bin
-# ENTRYPOINT ["docker-entrypoint.sh"]
 
 USER hbase
 # 16000: HMaster

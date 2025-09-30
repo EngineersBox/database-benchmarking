@@ -74,8 +74,3 @@ export HADOOP_OPTS="-Djava.library.path=\$HADOOP_HOME/lib/native"
 EOF
 
 source ~/.bashrc
-
-# Initialise the node filesystem
-hdfs namenode -format
-start-dfs.sh
-start-yarn.sh

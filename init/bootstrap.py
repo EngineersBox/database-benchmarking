@@ -2,47 +2,47 @@ import json, logging, subprocess
 from typing import Any
 from enum import Enum
 
-def cassandraPreInit(config: dict[str, Any]) -> None:
-    pass
+def cassandraPreInit(_: dict[str, Any]) -> None:
+    logging.debug("No pre-init stage for Cassandra, skipping")
 
 def cassandraPostInit(config: dict[str, Any]) -> None:
     invokeInit = config["INVOKE_INIT"] or False
     if (not invokeInit):
         return
     import app.cass as cass
-    cass.main(config)
+    cass.postInit(config)
 
-def elasticsearchPreInit(config: dict[str, Any]) -> None:
-    pass
+def elasticsearchPreInit(_: dict[str, Any]) -> None:
+    logging.debug("No pre-init stage for Elasticsearch, skipping")
 
-def elasticsearchPostInit(config: dict[str, Any]) -> None:
-    pass
+def elasticsearchPostInit(_: dict[str, Any]) -> None:
+    logging.debug("No post-init stage for Elasticsearch, skipping")
 
-def hbasePreInit(config: dict[str, Any]) -> None:
-    pass
+def hbasePreInit(_: dict[str, Any]) -> None:
+    logging.debug("No pre-init stage for HBase, skipping")
 
 def hbasePostInit(config: dict[str, Any]) -> None:
     import app.hbase as hbase
     hbase.main(config)
 
-def mongoDBPreInit(config: dict[str, Any]) -> None:
-    pass
+def mongoDBPreInit(_: dict[str, Any]) -> None:
+    logging.debug("No pre-init stage for MongoDB, skipping")
 
-def mongoDBPostInit(config: dict[str, Any]) -> None:
-    pass
+def mongoDBPostInit(_: dict[str, Any]) -> None:
+    logging.debug("No post-init stage for MongoDB, skipping")
 
-def scyllaPreInit(config: dict[str, Any]) -> None:
-    pass
+def scyllaPreInit(_: dict[str, Any]) -> None:
+    logging.debug("No pre-init stage for Scylla, skipping")
 
-def scyllaPostInit(config: dict[str, Any]) -> None:
-    pass
+def scyllaPostInit(_: dict[str, Any]) -> None:
+    logging.debug("No post-init stage for Scylla, skipping")
 
 def otelPreInit(config: dict[str, Any]) -> None:
     import app.otel as otel
     otel.main(config)
 
-def otelPostInit(config: dict[str, Any]) -> None:
-    pass
+def otelPostInit(_: dict[str, Any]) -> None:
+    logging.debug("No post-init stage for OTEL, skipping")
 
 class ApplicationVariant(Enum):
     CASSANDRA = cassandraPreInit, cassandraPostInit
@@ -70,12 +70,17 @@ def main() -> None:
     logging.info(f"Invoking {variant} pre-init stage")
     application.invokePreInit(config)
     logging.info(f"Starting {variant} services")
-    subprocess.run(
-        f"docker compose -f /var/lib/cluster/docker/{variant}/docker-compose.yaml up -d",
-        shell=True
-    ).check_returncode()
+    try:
+        subprocess.run(
+            f"docker compose -f /var/lib/cluster/docker/{variant}/docker-compose.yaml up -d",
+            shell=True
+        ).check_returncode()
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Failed to start {variant} docker compose services")
+        raise e
     logging.info(f"Invoking {variant} post-init stage")
     application.invokePostInit(config)
+    logging.info("Node bootstrap succeeded")
 
 if __name__ == "__main__":
     main()
