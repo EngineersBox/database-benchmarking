@@ -22,33 +22,34 @@ sudo apt-get install -y \
 # Create hadoop user and setup inter-node SSH
 sudo adduser hadoop
 sudo usermod -aG sudo hadoop
-sudo -u hadoop ssh-keygen -t rsa -P "" -f ~/.ssh/id_rsa
-sudo -u hadoop chmod 700 ~/.ssh
-sudo -u hadoop chmod 600 ~/.ssh/authorized_keys
-echo "ssh" | sudo tee -a /etc/pdsh/rcmd_default > /dev/null
+# sudo -u hadoop ssh-keygen -t rsa -P "" -f ~/.ssh/id_rsa
+# sudo -u hadoop chmod 700 ~/.ssh
+# sudo -u hadoop chmod 600 ~/.ssh/authorized_keys
+# echo "ssh" | sudo tee -a /etc/pdsh/rcmd_default > /dev/null
 
 # Create the HDFS mount if necessary
-if test -b /dev/sdb && ! grep -q /dev/sdb /etc/fstab; then
-    sudo mke2fs -F -j /dev/sdb
-    sudo mount /dev/sdb /mnt
-    sudo chmod 755 /mnt
-    echo "/dev/sdb      /mnt    ext3    defaults,nofail 0       2" | sudo tee -a /etc/fstab > /dev/null
-fi
+# if test -b /dev/sdb && ! grep -q /dev/sdb /etc/fstab; then
+#     sudo mke2fs -F -j /dev/sdb
+#     sudo mount /dev/sdb /mnt
+#     sudo chmod 755 /mnt
+#     echo "/dev/sdb      /mnt    ext3    defaults,nofail 0       2" | sudo tee -a /etc/fstab > /dev/null
+# fi
 
-sudo mkdir /mnt/hadoop
-sudo chmod 1777 /mnt/hadoop
+# sudo mkdir /mnt/hadoop
+# sudo chmod 1777 /mnt/hadoop
 
 # Pull hadoop release
-wget "https://downloads.apache.org/hadoop/common/hadoop-$VERSION/hadoop-$VERSION-lean.tar.gz"
-tar -xvzf "hadoop-$VERSION-lean.tar.gz"
+sudo wget "https://downloads.apache.org/hadoop/common/hadoop-$VERSION/hadoop-$VERSION-lean.tar.gz"
+sudo tar -xzf "hadoop-$VERSION-lean.tar.gz"
 sudo mv "hadoop-$VERSION" /var/lib/hadoop
-sudo mkdir -p /var/lib/hadoop/logs
+sudo chmod 0777 /var/lib/hadoop
+mkdir -p /var/lib/hadoop/logs
 
 # Construct and configure hadoop properties
-cat >> /var/lib/hadoop/etc/hadoop/hadoop-env.sh << EOF
+cat << EOF | sudo tee -a /var/lib/hadoop/etc/hadoop/hadoop-env.sh
 export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")
 EOF
-sudo cp /var/lib/cluster/hadoop/etc/hadoop/* /var/lib/hadoop/etc/hadoop/.
+sudo cp -r /var/lib/cluster/config/hadoop/etc/hadoop* /var/lib/hadoop/etc/hadoop/.
 
 # Install javax activation
 sudo wget "https://jcenter.bintray.com/javax/activation/javax.activation-api/1.2.0/javax.activation-api-1.2.0.jar" -O /var/lib/hadoop/lib/javax.activation-api-1.2.0.jar

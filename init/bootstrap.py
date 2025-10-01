@@ -18,12 +18,12 @@ def elasticsearchPreInit(_: dict[str, Any]) -> None:
 def elasticsearchPostInit(_: dict[str, Any]) -> None:
     logging.debug("No post-init stage for Elasticsearch, skipping")
 
-def hbasePreInit(_: dict[str, Any]) -> None:
-    logging.debug("No pre-init stage for HBase, skipping")
-
-def hbasePostInit(config: dict[str, Any]) -> None:
+def hbasePreInit(config: dict[str, Any]) -> None:
     import app.hbase as hbase
     hbase.main(config)
+
+def hbasePostInit(_: dict[str, Any]) -> None:
+    logging.debug("No post-init stage for HBase, skipping")
 
 def mongoDBPreInit(_: dict[str, Any]) -> None:
     logging.debug("No pre-init stage for MongoDB, skipping")
