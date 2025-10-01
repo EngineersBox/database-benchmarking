@@ -33,7 +33,7 @@ def hdfsStartNameNode() -> None:
         runCommand(command)
 
 def hdfsStartDataNode() -> None:
-    runCommand("hdfs --config=$HADOOP_HOME/etc/hadoop --daemon=start datanode")
+    runCommand("hdfs --config $HADOOP_HOME/etc/hadoop --daemon start datanode")
 
 def hdfsStartResourceManager() -> None:
     runCommand("yarn-daemon.sh --config $HADOOP_HOME/etc/hadoop start resourcemanager")
