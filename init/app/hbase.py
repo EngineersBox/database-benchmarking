@@ -6,7 +6,7 @@ logging.basicConfig(format="[%(levelname)s] %(name)s :: %(message)s", level=logg
 
 def runCommand(command: str, user: str = "hadoop") -> None:
     result = subprocess.run(
-        f"source ~/.hadoop_env && {command}",
+        f"sudo su -s /bin/bash -c 'source ~/.hadoop_env && {command}' - {user}",
         shell=True,
         user=user,
         stderr=subprocess.PIPE,
