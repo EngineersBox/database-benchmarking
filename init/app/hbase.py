@@ -1,11 +1,26 @@
-import os, subprocess
+import subprocess, logging
 from enum import Enum
 from typing import Any, Callable, Optional 
+
+logging.basicConfig(format="[%(levelname)s] %(name)s :: %(message)s", level=logging.DEBUG)
+
+def runCommand(command: str, user: str = "hadoop") -> None:
+    result = subprocess.run(
+        f"source ~/.hadoop_env && {command}",
+        shell=True,
+        user=user,
+        stderr=subprocess.PIPE,
+        stdout=subprocess.PIPE
+    )
+    if (result.returncode != 0):
+        logging.error(f"Failed to run command: {result.stderr.decode()}")
+        result.check_returncode()
+    logging.info(f"Command: {command}\nResult: {result.stdout.decode()}")
 
 def hdfsStartNameNode() -> None:
     commands = [
         "hadoop namenode -format",
-        "hadoop-daemon.sh --config $HADOOP_HOME/etc/hadoop --script hdfs start namenode",
+        "hdfs --config $HADOOP_HOME/etc/hadoop --daemon start namenode",
         "hdfs dfs -mkdir /user",
         "hdfs dfs -mkdir /tmp",
         "hdfs dfs -mkdir /tmp/hadoop-yarn",
@@ -15,43 +30,22 @@ def hdfsStartNameNode() -> None:
         "hdfs dfs -chmod 1777 /tmp/hadoop-yarn/staging",
     ]
     for command in commands:
-        result = subprocess.run(command, shell=True, user="hadoop")
-        result.check_returncode()
+        runCommand(command)
 
 def hdfsStartDataNode() -> None:
-	subprocess.run(
-        "hadoop-daemon.sh --config $HADOOP_HOME/etc/hadoop --script hdfs start datanode",
-        shell=True,
-        user="hadoop"
-    ).check_returncode()
+    runCommand("hdfs --config=$HADOOP_HOME/etc/hadoop --daemon=start datanode")
 
 def hdfsStartResourceManager() -> None:
-    subprocess.run(
-        "yarn-daemon.sh --config $HADOOP_HOME/etc/hadoop start resourcemanager",
-        shell=True,
-        user="hadoop"
-    ).check_returncode()
+    runCommand("yarn-daemon.sh --config $HADOOP_HOME/etc/hadoop start resourcemanager")
 
 def hdfsStartNodeManager() -> None:
-	subprocess.run(
-        "yarn-daemon.sh --config $HADOOP_HOME/etc/hadoop start nodemanager",
-        shell=True,
-        user="hadoop"
-    ).check_returncode()
+    runCommand("yarn-daemon.sh --config $HADOOP_HOME/etc/hadoop start nodemanager")
 
 def hdfsStartWebProxy() -> None:
-	subprocess.run(
-        "yarn-daemon.sh --config $HADOOP_HOME/etc/hadoop start proxyserver",
-        shell=True,
-        user="hadoop"
-    ).check_returncode()
+    runCommand("yarn-daemon.sh --config $HADOOP_HOME/etc/hadoop start proxyserver")
 
 def hdfsStartMapredHistory() -> None:
-    subprocess.run(
-        "mr-jobhistory-daemon.sh --config $HADOOP_HOME/etc/hadoop start historyserver",
-        shell=True,
-        user="hadoop"
-    ).check_returncode()
+    runCommand("mr-jobhistory-daemon.sh --config $HADOOP_HOME/etc/hadoop start historyserver")
 
 class HBaseAppType(Enum):
     HDFS = "hdfs"
@@ -78,9 +72,11 @@ class HBaseNodeRole(Enum):
 def main(config: dict[str, Any]):
     node_roles: list[str] = config["NODE_ROLES"]
     for raw_role in node_roles:
-        if (raw_role not in HBaseNodeRole._member_names_):
-            raise RuntimeError(f"Unknown role specified in NODE_ROLES: {node_roles}")
-        role = HBaseNodeRole[raw_role.upper()]
+        upper_role = raw_role.strip().upper()
+        if (upper_role not in HBaseNodeRole.__members__):
+            member_names = [name for (name, _) in HBaseNodeRole.__members__]
+            raise RuntimeError(f"Unknown role '{upper_role}' specified in NODE_ROLES: {member_names}")
+        role = HBaseNodeRole[upper_role]
         init = role.initFunction()
         if (init != None):
             init()

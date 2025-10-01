@@ -2,6 +2,10 @@ import json, logging, subprocess
 from typing import Any
 from enum import Enum
 
+logging.basicConfig(format="[%(levelname)s] %(name)s :: %(message)s", level=logging.DEBUG)
+
+CONFIG_PATH = "/var/lib/cluster/init/bootstrap_config.json"
+
 def cassandraPreInit(_: dict[str, Any]) -> None:
     logging.debug("No pre-init stage for Cassandra, skipping")
 
@@ -57,10 +61,6 @@ class ApplicationVariant(Enum):
 
     def invokePostInit(self, config: dict[str, Any]) -> None:
         self.value[1](config)
-
-logging.basicConfig(format="[%(levelname)s] %(name)s :: %(message)s", level=logging.DEBUG)
-
-CONFIG_PATH = "/var/lib/cluster/init/bootstrap_config.json"
 
 def main() -> None:
     with open(CONFIG_PATH, 'r') as f:

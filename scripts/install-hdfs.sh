@@ -51,9 +51,6 @@ export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")
 EOF
 sudo cp -r /var/lib/cluster/config/hadoop/etc/hadoop* /var/lib/hadoop/etc/hadoop/.
 
-# Install javax activation
-sudo wget "https://jcenter.bintray.com/javax/activation/javax.activation-api/1.2.0/javax.activation-api-1.2.0.jar" -O /var/lib/hadoop/lib/javax.activation-api-1.2.0.jar
-
 # Ensure the hadoop user owns everything
 sudo chown -R hadoop:hadoop /var/lib/hadoop
 
@@ -61,8 +58,7 @@ sudo chown -R hadoop:hadoop /var/lib/hadoop
 sudo mkdir -p /home/hadoop/hdfs/{namenode,datanode}
 sudo chown -R hadoop:hadoop /home/hadoop/hdfs
 
-sudo su - hadoop
-cat >> ~/.bashrc << EOF
+cat << EOF | sudo tee -a /home/hadoop/.bashrc /home/hadoop/.hadoop_env
 export HADOOP_HOME=/var/lib/hadoop
 export HADOOP_INSTALL=\$HADOOP_HOME
 export HADOOP_MAPRED_HOME=\$HADOOP_HOME
@@ -73,5 +69,7 @@ export HADOOP_COMMON_LIB_NATIVE_DIR=\$HADOOP_HOME/lib/native
 export PATH=\$PATH:\$HADOOP_HOME/sbin:\$HADOOP_HOME/bin
 export HADOOP_OPTS="-Djava.library.path=\$HADOOP_HOME/lib/native"
 EOF
+sudo chown hadoop:hadoop /home/hadoop/.hadoop_env
 
-source ~/.bashrc
+# Install javax activation
+sudo wget "https://jcenter.bintray.com/javax/activation/javax.activation-api/1.2.0/javax.activation-api-1.2.0.jar" -O /var/lib/hadoop/lib/javax.activation-api-1.2.0.jar
