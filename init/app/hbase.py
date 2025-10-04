@@ -13,7 +13,7 @@ def runCommand(command: str, user: str = "hadoop") -> None:
         stdout=subprocess.PIPE
     )
     if (result.returncode != 0):
-        logging.error(f"Failed to run command: {result.stderr.decode()}")
+        logging.error(f"Failed to run command\n STDOUT: {result.stdout.decode()}\nSTDERR: {result.stderr.decode()}")
         result.check_returncode()
     logging.info(f"Command: {command}\nResult: {result.stdout.decode()}")
 
@@ -36,16 +36,16 @@ def hdfsStartDataNode() -> None:
     runCommand("hdfs --config $HADOOP_HOME/etc/hadoop --daemon start datanode")
 
 def hdfsStartResourceManager() -> None:
-    runCommand("yarn-daemon.sh --config $HADOOP_HOME/etc/hadoop start resourcemanager")
+    runCommand("yarn --config $HADOOP_HOME/etc/hadoop --daemon start resourcemanager")
 
 def hdfsStartNodeManager() -> None:
-    runCommand("yarn-daemon.sh --config $HADOOP_HOME/etc/hadoop start nodemanager")
+    runCommand("yarn --config $HADOOP_HOME/etc/hadoop --daemon start nodemanager")
 
 def hdfsStartWebProxy() -> None:
-    runCommand("yarn-daemon.sh --config $HADOOP_HOME/etc/hadoop start proxyserver")
+    runCommand("yarn --config $HADOOP_HOME/etc/hadoop --daemon start proxyserver")
 
 def hdfsStartMapredHistory() -> None:
-    runCommand("mr-jobhistory-daemon.sh --config $HADOOP_HOME/etc/hadoop start historyserver")
+    runCommand("mapred --config $HADOOP_HOME/etc/hadoop --daemon start historyserver")
 
 class HBaseAppType(Enum):
     HDFS = "hdfs"
@@ -71,12 +71,12 @@ class HBaseNodeRole(Enum):
 
 def main(config: dict[str, Any]):
     node_roles: list[str] = config["NODE_ROLES"]
+    member_names = list(HBaseNodeRole.__members__.keys())
     for raw_role in node_roles:
-        upper_role = raw_role.strip().upper()
-        if (upper_role not in HBaseNodeRole.__members__):
-            member_names = [name for (name, _) in HBaseNodeRole.__members__]
+        upper_role = raw_role.upper()
+        if (upper_role not in member_names):
             raise RuntimeError(f"Unknown role '{upper_role}' specified in NODE_ROLES: {member_names}")
         role = HBaseNodeRole[upper_role]
-        init = role.initFunction()
-        if (init != None):
-            init()
+        initFn = role.initFunction()
+        if (initFn != None):
+            initFn()
