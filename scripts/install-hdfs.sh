@@ -49,7 +49,7 @@ mkdir -p /var/lib/hadoop/logs
 cat << EOF | sudo tee -a /var/lib/hadoop/etc/hadoop/hadoop-env.sh
 export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")
 EOF
-sudo cp -r /var/lib/cluster/config/hadoop/etc/hadoop* /var/lib/hadoop/etc/hadoop/.
+sudo cp -r /var/lib/cluster/config/hadoop/etc/hadoop/* /var/lib/hadoop/etc/hadoop/.
 
 # Ensure the hadoop user owns everything
 sudo chown -R hadoop:hadoop /var/lib/hadoop

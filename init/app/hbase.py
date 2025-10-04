@@ -53,7 +53,7 @@ class HBaseAppType(Enum):
 
 class HBaseNodeRole(Enum):
     HBASE_DATA = None, HBaseAppType.HBase
-    HBASE_ZOOKEPER = None, HBaseAppType.HBase
+    HBASE_ZOOKEEPER = None, HBaseAppType.HBase
     HBASE_MASTER = None, HBaseAppType.HBase
     HBASE_BACKUP_MASTER = None, HBaseAppType.HBase
     HDFS_NAME = hdfsStartNameNode, HBaseAppType.HDFS
