@@ -1,11 +1,11 @@
 services:
   hbase:
     container_name: hbase
-    image: ghcr.io/engineersbox/hbase:2.6-metrics
+    image: ghcr.io/engineersbox/hbase:2.6.3
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/cluster/logs:/etc/hbase/logs
-      - /var/lib/cluster/config/hbase:/etc/hbase/conf
+      - /var/lib/cluster/logs:/var/lib/hbase/logs
+      - /var/lib/cluster/config/hbase:/var/lib/hbase/conf
       # HDFS
       - /var/lib/hadoop:/var/lib/hadoop
     mem_limit: 16gb

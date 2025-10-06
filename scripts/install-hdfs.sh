@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 VERSION="$1"
 
 sudo apt-get update -y
@@ -45,11 +47,12 @@ sudo mv "hadoop-$VERSION" /var/lib/hadoop
 sudo chmod 0777 /var/lib/hadoop
 mkdir -p /var/lib/hadoop/logs
 
-# Construct and configure hadoop properties
-cat << EOF | sudo tee -a /var/lib/hadoop/etc/hadoop/hadoop-env.sh
-export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")
-EOF
+# Copy in config overrides
 sudo cp -r /var/lib/cluster/config/hadoop/etc/hadoop/* /var/lib/hadoop/etc/hadoop/.
+
+# Construct and configure hadoop properties
+java_home=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")
+sudo sed -i "s%@@JAVA_HOME@@%$java_home%g" /var/lib/hadoop/etc/hadoop/hadoop-env.sh
 
 # Ensure the hadoop user owns everything
 sudo chown -R hadoop:hadoop /var/lib/hadoop
@@ -68,6 +71,7 @@ export YARN_HOME=\$HADOOP_HOME
 export HADOOP_COMMON_LIB_NATIVE_DIR=\$HADOOP_HOME/lib/native
 export PATH=\$PATH:\$HADOOP_HOME/sbin:\$HADOOP_HOME/bin
 export HADOOP_OPTS="-Djava.library.path=\$HADOOP_HOME/lib/native"
+export JAVA_HOME=$java_home
 EOF
 sudo chown hadoop:hadoop /home/hadoop/.hadoop_env
 

@@ -1,5 +1,5 @@
 FROM debian:bookworm-slim
-LABEL org.opencontainers.image.source https://github.com/EngineersBox/database-benchmarking
+LABEL org.opencontainers.image.source=https://github.com/EngineersBox/database-benchmarking
 
 ARG REPOSITORY="https://github.com/EngineersBox/hbase.git"
 ARG BRANCH="2.6.3-kairos"
@@ -59,7 +59,9 @@ RUN apt-get clean
 RUN ln -sT "$(readlink -e /usr/lib/*/libjemalloc.so.2)" /usr/local/lib/libjemalloc.so
 RUN ldconfig
 
-RUN echo 'export JAVA_HOME=$(readlink -f /usr/bin/javac | sed "s:bin/javac::")' >> ~/.bashrc
+RUN update-java-alternatives --set /usr/lib/jvm/java-1.17.0-openjdk-amd64
+RUN echo 'export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64' >> ~/.bashrc
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 # Docker cache avoidance to detect new commits
 ARG CACHEBUST=0
@@ -97,9 +99,9 @@ RUN chown -R hbase:hbase /var/lib/hbase
 WORKDIR /
 RUN rm -rf /var/lib/hbase_repo
 
-ENV HBASE_HOME /var/lib/hbase
-ENV HBASE_CONF_DIR /etc/hbase
-ENV PATH $HBASE_HOME/bin:$PATH
+ENV HBASE_HOME=/var/lib/hbase
+ENV HBASE_CONF_DIR=/var/lib/hbase/conf
+ENV PATH=$HBASE_HOME/bin:$PATH
 
 WORKDIR /var/lib
 RUN mkdir -p otel
