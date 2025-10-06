@@ -3,5 +3,9 @@
         <name>yarn.nodemanager.aux-services</name>
         <value>@@AUX_SERVICES@@</value>
     </property>
+    <property>
+        <name>yawn.web-proxy.address</name>
+        <value>@@WEB_PROXY_ADDRESS</value>
+    </property>
 </configuration>
 

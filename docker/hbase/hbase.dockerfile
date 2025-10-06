@@ -111,6 +111,7 @@ RUN wget "https://github.com/open-telemetry/opentelemetry-java-contrib/releases/
 RUN chown -R hbase:hbase /var/lib/otel
 
 WORKDIR /
+COPY docker/hbase/start.sh /var/lib/hbase/bin/start.sh
 
 USER hbase
 # 16000: HMaster
@@ -122,4 +123,4 @@ USER hbase
 # 9090: Thrift server
 # 9095: Thrift server
 EXPOSE 16000 16010 16020 16030 8080 8085 9090 9095
-CMD ["/var/lib/hbase/bin/start-hbase.sh"]
+CMD ["/var/lib/hbase/bin/start.sh"]
