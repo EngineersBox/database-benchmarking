@@ -122,5 +122,6 @@ USER hbase
 # 8085: REST server web UI
 # 9090: Thrift server
 # 9095: Thrift server
-EXPOSE 16000 16010 16020 16030 8080 8085 9090 9095
+# 2181: Zookeeper
+EXPOSE 16000 16010 16020 16030 8080 8085 9090 9095 2181
 CMD ["/var/lib/hbase/bin/start.sh"]

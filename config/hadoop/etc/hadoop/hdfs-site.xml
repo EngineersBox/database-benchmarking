@@ -19,17 +19,5 @@
         <name>dfs.namenode.checkpoint.dir</name>
         <value>file:///home/hadoop/hdfs/namesecondary</value>
     </property>
-    <property>
-        <name>dfs.namenode.rpc-address</name>
-        <value>@@DFS_NAMENODE_RPC_ADDRESS@@</value>
-    </property>
-    <property>
-        <name>dfs.namenode.rpc-address</name>
-        <value>@@DFS_NAMENODE_RPC_ADDRESS@@</value>
-    </property>
-    <property>
-        <name>dfs.namenode.servicerpc-address</name>
-        <value>@@DFS_NAMENODE_SERVICE_RPC_ADDRESS@@</value>
-    </property>
 </configuration>
 
