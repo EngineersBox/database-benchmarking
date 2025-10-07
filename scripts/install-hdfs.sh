@@ -45,7 +45,7 @@ sudo wget "https://downloads.apache.org/hadoop/common/hadoop-$VERSION/hadoop-$VE
 sudo tar -xzf "hadoop-$VERSION-lean.tar.gz"
 sudo mv "hadoop-$VERSION" /var/lib/hadoop
 sudo chmod 0777 /var/lib/hadoop
-mkdir -p /var/lib/hadoop/logs
+mkdir -p /var/lib/hadoop/logs /var/lib/hadoop/logs/yarn
 
 # Copy in config overrides
 sudo cp -r /var/lib/cluster/config/hadoop/etc/hadoop/* /var/lib/hadoop/etc/hadoop/.
@@ -58,7 +58,7 @@ sudo sed -i "s%@@JAVA_HOME@@%$java_home%g" /var/lib/hadoop/etc/hadoop/hadoop-env
 sudo chown -R hadoop:hadoop /var/lib/hadoop
 
 # Create directories for data
-sudo mkdir -p /home/hadoop/hdfs/{namenode,datanode}
+sudo mkdir -p /home/hadoop/hdfs/{name,data,namesecondary}
 sudo chown -R hadoop:hadoop /home/hadoop/hdfs
 
 cat << EOF | sudo tee -a /home/hadoop/.bashrc /home/hadoop/.hadoop_env

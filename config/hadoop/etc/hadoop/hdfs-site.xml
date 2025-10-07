@@ -4,12 +4,32 @@
         <value>@@DFS_REPLICATION@@</value>
     </property>
     <property>
-        <name>dfs.name.dir</name>
-        <value>file:///home/hadoop/hdfs/namenode</value>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:///home/hadoop/hdfs/data</value>
     </property>
     <property>
-        <name>dfs.data.dir</name>
-        <value>file:///home/hadoop/hdfs/datanode</value>
+        <name>dfs.datanode.data.dir.perm</name>
+        <value>0744</value>
+    </property>
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:///home/hadoop/hdfs/name</value>
+    </property>
+    <property>
+        <name>dfs.namenode.checkpoint.dir</name>
+        <value>file:///home/hadoop/hdfs/namesecondary</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address</name>
+        <value>@@DFS_NAMENODE_RPC_ADDRESS@@</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address</name>
+        <value>@@DFS_NAMENODE_RPC_ADDRESS@@</value>
+    </property>
+    <property>
+        <name>dfs.namenode.servicerpc-address</name>
+        <value>@@DFS_NAMENODE_SERVICE_RPC_ADDRESS@@</value>
     </property>
 </configuration>
 

@@ -4,8 +4,28 @@
         <value>@@AUX_SERVICES@@</value>
     </property>
     <property>
-        <name>yawn.web-proxy.address</name>
-        <value>@@WEB_PROXY_ADDRESS</value>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>@@RESOURCE_MANAGER_HOSTNAME@@</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.hostname</name>
+        <value>@@NODE_MANAGER_HOSTNAME@@</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.remote-app-log-dir</name>
+        <value>/var/lib/hadoop/logs/yarn</value>
+    </property>
+    <property>
+        <name>yarn.timeline-service.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.system-metrics-publisher.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>yarn.timeline-service.hostname</name>
+        <value>@@YARN_TIMELINE_SERVICE_HOSTNAME@@</value>
     </property>
 </configuration>
 
