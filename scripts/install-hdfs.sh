@@ -24,6 +24,7 @@ sudo apt-get install -y \
 # Create hadoop user and setup inter-node SSH
 sudo adduser hadoop
 sudo usermod -aG sudo hadoop
+echo "hadoop ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/hadoop"
 # sudo -u hadoop ssh-keygen -t rsa -P "" -f ~/.ssh/id_rsa
 # sudo -u hadoop chmod 700 ~/.ssh
 # sudo -u hadoop chmod 600 ~/.ssh/authorized_keys

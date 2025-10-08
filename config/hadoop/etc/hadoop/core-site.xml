@@ -1,7 +1,7 @@
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://@@HDFS_HOSTNAME@@:9000</value>
+        <value>hdfs://@@HDFS_NAME_NODE@@:9000</value>
         <description>The default file system URI</description>
     </property>
 </configuration>
