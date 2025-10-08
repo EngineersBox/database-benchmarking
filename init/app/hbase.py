@@ -19,8 +19,8 @@ def runCommand(command: str, user: str = "hadoop") -> None:
 
 def hdfsStartNameNode() -> None:
     commands = [
-        "hadoop namenode -format",
-        "hdfs --config $HADOOP_HOME/etc/hadoop --daemon start namenode",
+        "sudo hadoop namenode -format",
+        "sudo hdfs --config $HADOOP_HOME/etc/hadoop --daemon start namenode",
         "hdfs dfs -mkdir /user",
         "hdfs dfs -mkdir /tmp",
         "hdfs dfs -mkdir /tmp/hadoop-yarn",
@@ -33,19 +33,19 @@ def hdfsStartNameNode() -> None:
         runCommand(command)
 
 def hdfsStartDataNode() -> None:
-    runCommand("hdfs --config $HADOOP_HOME/etc/hadoop --daemon start datanode")
+    runCommand("sudo hdfs --config $HADOOP_HOME/etc/hadoop --daemon start datanode")
 
 def hdfsStartResourceManager() -> None:
-    runCommand("yarn --config $HADOOP_HOME/etc/hadoop --daemon start resourcemanager")
+    runCommand("sudo yarn --config $HADOOP_HOME/etc/hadoop --daemon start resourcemanager")
 
 def hdfsStartNodeManager() -> None:
-    runCommand("yarn --config $HADOOP_HOME/etc/hadoop --daemon start nodemanager")
+    runCommand("sudo yarn --config $HADOOP_HOME/etc/hadoop --daemon start nodemanager")
 
 def hdfsStartWebProxy() -> None:
-    runCommand("yarn --config $HADOOP_HOME/etc/hadoop --daemon start proxyserver")
+    runCommand("sudo yarn --config $HADOOP_HOME/etc/hadoop --daemon start proxyserver")
 
 def hdfsStartMapredHistory() -> None:
-    runCommand("mapred --config $HADOOP_HOME/etc/hadoop --daemon start historyserver")
+    runCommand("sudo mapred --config $HADOOP_HOME/etc/hadoop --daemon start historyserver")
 
 class HBaseAppType(Enum):
     HDFS = "hdfs"
