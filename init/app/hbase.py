@@ -12,22 +12,29 @@ def runCommand(command: str, user: str = "hadoop") -> None:
         stderr=subprocess.PIPE,
         stdout=subprocess.PIPE
     )
+    logging.info(f"Command: {command}")
+    stdout_text = result.stdout.decode()
+    if (len(stdout_text) == 0):
+        stdout_text = "N/A"
+    stderr_text = result.stderr.decode()
+    if (len(stderr_text) == 0):
+        stderr_text = "N/A"
     if (result.returncode != 0):
-        logging.error(f"Failed to run command\n STDOUT: {result.stdout.decode()}\nSTDERR: {result.stderr.decode()}")
+        logging.error(f"Failed to run command\n\tSTDOUT: {stdout_text}\n\tSTDERR: {stderr_text}")
         result.check_returncode()
-    logging.info(f"Command: {command}\nResult: {result.stdout.decode()}")
+    logging.info(f"Result\n\tSTDOUT: {stdout_text}\n\tSTDERR: {stderr_text}")
 
 def hdfsStartNameNode() -> None:
     commands = [
-        "sudo $HADOOP_HOME/bin/hadoop namenode -format",
+        "sudo $HADOOP_HOME/bin/hdfs namenode -format",
         "sudo $HADOOP_HOME/bin/hdfs --config $HADOOP_HOME/etc/hadoop --daemon start namenode",
-        "hdfs dfs -mkdir /user",
-        "hdfs dfs -mkdir /tmp",
-        "hdfs dfs -mkdir /tmp/hadoop-yarn",
-        "hdfs dfs -mkdir /tmp/hadoop-yarn/staging",
-        "hdfs dfs -chmod 1777 /tmp",
-        "hdfs dfs -chmod 1777 /tmp/hadoop-yarn",
-        "hdfs dfs -chmod 1777 /tmp/hadoop-yarn/staging",
+        "sudo hdfs dfs -mkdir /user",
+        "sudo hdfs dfs -mkdir /tmp",
+        "sudo hdfs dfs -mkdir /tmp/hadoop-yarn",
+        "sudo hdfs dfs -mkdir /tmp/hadoop-yarn/staging",
+        "sudo hdfs dfs -chmod 1777 /tmp",
+        "sudo hdfs dfs -chmod 1777 /tmp/hadoop-yarn",
+        "sudo hdfs dfs -chmod 1777 /tmp/hadoop-yarn/staging",
     ]
     for command in commands:
         runCommand(command)
