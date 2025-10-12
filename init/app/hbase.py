@@ -28,13 +28,14 @@ def hdfsStartNameNode() -> None:
     commands = [
         "sudo $HADOOP_HOME/bin/hdfs namenode -format",
         "sudo $HADOOP_HOME/bin/hdfs --config $HADOOP_HOME/etc/hadoop --daemon start namenode",
-        "sudo hdfs dfs -mkdir /user",
-        "sudo hdfs dfs -mkdir /tmp",
-        "sudo hdfs dfs -mkdir /tmp/hadoop-yarn",
-        "sudo hdfs dfs -mkdir /tmp/hadoop-yarn/staging",
-        "sudo hdfs dfs -chmod 1777 /tmp",
-        "sudo hdfs dfs -chmod 1777 /tmp/hadoop-yarn",
-        "sudo hdfs dfs -chmod 1777 /tmp/hadoop-yarn/staging",
+        "sudo $HADOOP_HOME/bin/hdfs dfs -mkdir /user",
+        "sudo $HADOOP_HOME/bin/hdfs dfs -mkdir /hbase",
+        "sudo $HADOOP_HOME/bin/hdfs dfs -mkdir /tmp",
+        "sudo $HADOOP_HOME/bin/hdfs dfs -mkdir /tmp/hadoop-yarn",
+        "sudo $HADOOP_HOME/bin/hdfs dfs -mkdir /tmp/hadoop-yarn/staging",
+        "sudo $HADOOP_HOME/bin/hdfs dfs -chmod 1777 /tmp",
+        "sudo $HADOOP_HOME/bin/hdfs dfs -chmod 1777 /tmp/hadoop-yarn",
+        "sudo $HADOOP_HOME/bin/hdfs dfs -chmod 1777 /tmp/hadoop-yarn/staging",
     ]
     for command in commands:
         runCommand(command)
