@@ -112,6 +112,7 @@ RUN chown -R hbase:hbase /var/lib/otel
 
 WORKDIR /
 COPY docker/hbase/start.sh /var/lib/hbase/bin/start.sh
+COPY docker/hbase/start-daemons.sh /var/lib/hbase/bin/start-daemons.sh
 
 USER hbase
 # 16000: HMaster
