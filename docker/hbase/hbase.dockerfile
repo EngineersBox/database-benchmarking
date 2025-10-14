@@ -127,5 +127,5 @@ USER hbase
 # 2181: Zookeeper
 # 2888: Zookeeper peer port
 # 3888: Zookeeper leader election
-EXPOSE 16000 16010 16020 16030 16100 8080 8085 9090 9095 2181 2888 3888
+# EXPOSE 16000 16010 16020 16030 16100 8080 8085 9090 9095 2181 2888 3888
 CMD ["/var/lib/hbase/bin/start.sh"]

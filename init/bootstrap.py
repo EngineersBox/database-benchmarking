@@ -9,7 +9,7 @@ class HBaseAppType(Enum):
     HBase = "hbase"
 
 class HBaseNodeRole(Enum):
-    HBASE_DATA = "hbase_data", None, HBaseAppType.HBase
+    HBASE_DATA = "hbase_data", "regionserver", HBaseAppType.HBase
     HBASE_ZOOKEEPER = "hbase_zookeeper", "zookeeper", HBaseAppType.HBase
     HBASE_MASTER = "hbase_master", "master", HBaseAppType.HBase
     HBASE_BACKUP_MASTER = "hbase_backup_master", "backupmaster", HBaseAppType.HBase
@@ -34,7 +34,7 @@ CONFIG_PATH = "/var/lib/cluster/init/bootstrap_config.json"
 def dockerComposeUp(variant: str, profiles: list[str] = []) -> None:
     profiles_opt = ""
     if (len(profiles) > 0):
-        profiles_opt = "--profile ".join(profiles)
+        profiles_opt = " ".join([f"--profile {profile}" for profile in profiles])
     try:
         subprocess.run(
             f"docker compose -f /var/lib/cluster/docker/{variant}/docker-compose.yaml {profiles_opt} up -d",
@@ -56,14 +56,14 @@ def hbasePreInit(config: dict[str, Any]) -> None:
     hbase.main(config)
 
 def hbaseStart(config: dict[str, Any]) -> None:
-    roles = list(config["NODE_ROLES"])
+    node_roles: list[str] = config["NODE_ROLES"]
+    member_names = list(HBaseNodeRole.__members__.keys())
     profiles = []
-    for role in roles:
+    for role in node_roles:
         upper_role = role.upper()
-        if (role not in HBaseNodeRole.__members__):
-            logging.error(f"Unknown role {role}, skipping")
-            continue
-        hbase_role = HBaseNodeRole.__members__[upper_role]
+        if (upper_role not in member_names):
+            raise RuntimeError(f"Unknown role '{upper_role}' specified in NODE_ROLES. Must be one of: {member_names}")
+        hbase_role = HBaseNodeRole[upper_role]
         compose_profile = hbase_role.composeProfile()
         if (compose_profile != None):
             profiles.append(compose_profile)
