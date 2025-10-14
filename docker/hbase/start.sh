@@ -24,7 +24,13 @@
 # Run this on master node.
 usage="Usage: start-hbase.sh [--autostart-window-size <window size in hours>]\
       [--autostart-window-retry-limit <retry count limit for autostart>]\
-      [autostart|start]"
+      <master|zookeeper|regionserver|masterbackup> [autostart|start]"
+
+# if no args specified, show usage
+if [ $# -le 1 ]; then
+  echo "$usage"
+  exit 1
+fi
 
 bin="/var/lib/hbase/bin"
 
@@ -41,7 +47,9 @@ then
   exit $errCode
 fi
 
-if [ "$1" = "autostart" ]
+role="$1"
+
+if [ "$2" = "autostart" ]
 then
   commandToRun="--autostart-window-size ${AUTOSTART_WINDOW_SIZE} --autostart-window-retry-limit ${AUTOSTART_WINDOW_RETRY_LIMIT} autostart"
 else
@@ -55,12 +63,24 @@ if [ "$distMode" == 'false' ]
 then
   "$bin"/hbase-daemon.sh --config "${HBASE_CONF_DIR}" $commandToRun master
 else
-  "$bin"/start-daemons.sh --config "${HBASE_CONF_DIR}" $commandToRun zookeeper
-  "$bin"/hbase-daemon.sh --config "${HBASE_CONF_DIR}" $commandToRun master
-  "$bin"/start-daemons.sh --config "${HBASE_CONF_DIR}" \
-    --hosts "${HBASE_REGIONSERVERS}" $commandToRun regionserver
-  # "$bin"/start-daemons.sh --config "${HBASE_CONF_DIR}" \
-  #   --hosts "${HBASE_BACKUP_MASTERS}" $commandToRun master-backup
+    case "$role" in
+        master)
+            "$bin"/hbase-daemon.sh --config "${HBASE_CONF_DIR}" $commandToRun master
+            ;;
+        zookeeper)
+            "$bin"/start-daemons.sh --config "${HBASE_CONF_DIR}" $commandToRun zookeeper
+            ;;
+        regionserver)
+            "$bin"/start-daemons.sh --config "${HBASE_CONF_DIR}" --hosts "${HBASE_REGIONSERVERS}" $commandToRun regionserver
+            ;;
+        masterbackup)
+            "$bin"/start-daemons.sh --config "${HBASE_CONF_DIR}" --hosts "${HBASE_BACKUP_MASTERS}" $commandToRun master-backup
+            ;;
+        *)
+            echo "Unknown role: $role"
+            exit 1
+            ;;
+    esac
 fi
 
 while true; do
