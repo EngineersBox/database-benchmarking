@@ -59,8 +59,8 @@ else
   "$bin"/hbase-daemon.sh --config "${HBASE_CONF_DIR}" $commandToRun master
   "$bin"/start-daemons.sh --config "${HBASE_CONF_DIR}" \
     --hosts "${HBASE_REGIONSERVERS}" $commandToRun regionserver
-  "$bin"/start-daemons.sh --config "${HBASE_CONF_DIR}" \
-    --hosts "${HBASE_BACKUP_MASTERS}" $commandToRun master-backup
+  # "$bin"/start-daemons.sh --config "${HBASE_CONF_DIR}" \
+  #   --hosts "${HBASE_BACKUP_MASTERS}" $commandToRun master-backup
 fi
 
 while true; do
