@@ -22,15 +22,17 @@
 
 # Start hadoop hbase daemons.
 # Run this on master node.
-usage="Usage: start-hbase.sh [--autostart-window-size <window size in hours>]\
+usage="Usage: start.sh [--autostart-window-size <window size in hours>]\
       [--autostart-window-retry-limit <retry count limit for autostart>]\
       <master|zookeeper|regionserver|masterbackup> [autostart|start]"
 
 # if no args specified, show usage
-if [ $# -le 1 ]; then
+if [ $# -lt 1 ]; then
   echo "$usage"
   exit 1
 fi
+
+set -x
 
 bin="/var/lib/hbase/bin"
 

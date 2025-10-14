@@ -9,10 +9,10 @@ class HBaseAppType(Enum):
     HBase = "hbase"
 
 class HBaseNodeRole(Enum):
-    HBASE_DATA = "hbase_data", "regionserver", HBaseAppType.HBase
-    HBASE_ZOOKEEPER = "hbase_zookeeper", "zookeeper", HBaseAppType.HBase
-    HBASE_MASTER = "hbase_master", "master", HBaseAppType.HBase
-    HBASE_BACKUP_MASTER = "hbase_backup_master", "backupmaster", HBaseAppType.HBase
+    HBASE_DATA = "hbase_data", "hbase_regionserver", HBaseAppType.HBase
+    HBASE_ZOOKEEPER = "hbase_zookeeper", "hbase_zookeeper", HBaseAppType.HBase
+    HBASE_MASTER = "hbase_master", "hbase_master", HBaseAppType.HBase
+    HBASE_BACKUP_MASTER = "hbase_backup_master", "hbase_backupmaster", HBaseAppType.HBase
     HDFS_NAME = "hdfs_name", None, HBaseAppType.HDFS
     HDFS_DATA = "hdfs_data", None, HBaseAppType.HDFS
     HDFS_RESOURCE_MANAGER = "hdfs_resource_manager", None, HBaseAppType.HDFS

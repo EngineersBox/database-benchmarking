@@ -27,9 +27,11 @@ usage="Usage: start-daemons.sh [--config <hbase-confdir>] [--autostart-window-si
 
 # if no args specified, show usage
 if [ $# -le 1 ]; then
-  echo $usage
+  echo "$usage"
   exit 1
 fi
+
+set -x
 
 bin="/var/lib/hbase/bin"
 

@@ -19,7 +19,7 @@ services:
       - path: /var/lib/cluster/node_env
         required: true
     network_mode: host
-    command: "/var/lib/hbase/bin/start.sh master"
+    command: /bin/bash -c "/var/lib/hbase/bin/start.sh master"
     profiles:
       - hbase_master
   hbase_zookeeper:
@@ -42,7 +42,7 @@ services:
       - path: /var/lib/cluster/node_env
         required: true
     network_mode: host
-    command: "/var/lib/hbase/bin/start.sh zookeeper"
+    command: /bin/bash -c "/var/lib/hbase/bin/start.sh zookeeper"
     profiles:
       - hbase_zookeeper
   hbase_regionserver:
@@ -68,7 +68,7 @@ services:
       - path: /var/lib/cluster/node_env
         required: true
     network_mode: host
-    command: "/var/lib/hbase/bin/start.sh regionserver"
+    command: /bin/bash -c "/var/lib/hbase/bin/start.sh regionserver"
     profiles:
       - hbase_regionserver
   hbase_masterbackup:
@@ -90,7 +90,7 @@ services:
       - path: /var/lib/cluster/node_env
         required: true
     network_mode: host
-    command: "/var/lib/hbase/bin/start.sh masterbackup"
+    command: /bin/bash -c "/var/lib/hbase/bin/start.sh masterbackup"
     profiles:
       - hbase_masterbackup
   otel-hostmetrics:
