@@ -30,6 +30,11 @@ def hdfsStartNameNode() -> None:
         "sudo $HADOOP_HOME/bin/hdfs --config $HADOOP_HOME/etc/hadoop --daemon start namenode",
         "sudo $HADOOP_HOME/bin/hdfs dfs -mkdir /user",
         "sudo $HADOOP_HOME/bin/hdfs dfs -mkdir /hbase",
+    # NOTE: These sudo executed hdfs commands cause the HDFS filesystem to be
+    #        root owned and thus when HBase goes to write to them, it fails.
+    #        The /hbase dir should be owned by the hbase user (1000:1000)
+        "sudo $HADOOP_HOME/bin/hdfs dfs -chown 1000:1000 /hbase",
+        "sudo $HADOOP_HOME/bin/hdfs dfs -chmod 0777 /hbase",
         "sudo $HADOOP_HOME/bin/hdfs dfs -mkdir /tmp",
         "sudo $HADOOP_HOME/bin/hdfs dfs -mkdir /tmp/hadoop-yarn",
         "sudo $HADOOP_HOME/bin/hdfs dfs -mkdir /tmp/hadoop-yarn/staging",
