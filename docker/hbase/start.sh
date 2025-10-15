@@ -55,7 +55,7 @@ if [ "$2" = "autostart" ]
 then
   commandToRun="--autostart-window-size ${AUTOSTART_WINDOW_SIZE} --autostart-window-retry-limit ${AUTOSTART_WINDOW_RETRY_LIMIT} autostart"
 else
-  commandToRun="start"
+  commandToRun="foreground_start"
 fi
 
 # HBASE-6504 - only take the first line of the output in case verbose gc is on
@@ -84,7 +84,3 @@ else
             ;;
     esac
 fi
-
-while true; do
-    sleep 1000
-done

@@ -29,6 +29,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/cluster/logs:/var/lib/hbase/logs
       - /var/lib/cluster/config/hbase:/var/lib/hbase/conf
+      - /var/lib/cluster/zookeeper:/etc/zookeeper
       # HDFS
       - /var/lib/hadoop:/var/lib/hadoop
     mem_limit: 16gb

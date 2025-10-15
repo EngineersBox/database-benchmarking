@@ -124,7 +124,7 @@
 # export HBASE_SLAVE_SLEEP=0.1
 
 # Tell HBase whether it should manage it's own instance of ZooKeeper or not.
-# export HBASE_MANAGES_ZK=true
+export HBASE_MANAGES_ZK=true
 
 # The default log rolling policy is RFA, where the log file is rolled as per the size defined for the
 # RFA appender. Please refer to the log4j2.properties file to see more details on this appender.

@@ -55,13 +55,16 @@ def hdfsStartWebProxy() -> None:
 def hdfsStartMapredHistory() -> None:
     runCommand("sudo $HADOOP_HOME/bin/mapred --config $HADOOP_HOME/etc/hadoop --daemon start historyserver")
 
+def hbaseZookeeperInit() -> None:
+    runCommand("sudo mkdir -p /var/lib/cluster/zookeeper && sudo chmod 0777 /var/lib/cluster/zookeeper")
+
 class HBaseAppType(Enum):
     HDFS = "hdfs"
     HBase = "hbase"
 
 class HBaseNodeRole(Enum):
     HBASE_DATA = None, HBaseAppType.HBase
-    HBASE_ZOOKEEPER = None, HBaseAppType.HBase
+    HBASE_ZOOKEEPER = hbaseZookeeperInit, HBaseAppType.HBase
     HBASE_MASTER = None, HBaseAppType.HBase
     HBASE_BACKUP_MASTER = None, HBaseAppType.HBase
     HDFS_NAME = hdfsStartNameNode, HBaseAppType.HDFS
