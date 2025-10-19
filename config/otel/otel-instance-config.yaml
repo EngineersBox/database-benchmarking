@@ -24,7 +24,7 @@ receivers:
             enabled: true
       process:
         include:
-          names: [".*cassandra.*"]
+          names: [@@PROCESS_REGEXES@@]
           match_type: "regexp"
         metrics:
           process.context_switches:
