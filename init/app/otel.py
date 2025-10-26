@@ -10,7 +10,7 @@ CONNECT_RETRY_DELAY_SECONDS = 10
 def filterUpHosts(hosts: list[Host]) -> list[Host]:
     return list(filter(lambda host: host.is_up, hosts))
 
-def checkHosts(node_ips: list[str], contact_points: list[str]) -> bool:
+def checkCassandraHosts(node_ips: list[str], contact_points: list[str]) -> bool:
     cluster: Optional[Cluster] = None
     try:
         logging.info("Connecting to Cassandra cluster")
@@ -47,7 +47,7 @@ def mainCassandra(config: dict[str, Any]) -> None:
     node_ips = config["NODE_IPS"]
     contact_points = node_ips[:min(len(node_ips), 3)]
     logging.debug(f"Retry  delay set to {CONNECT_RETRY_DELAY_SECONDS} seconds")
-    while (not checkHosts(node_ips, contact_points)):
+    while (not checkCassandraHosts(node_ips, contact_points)):
         time.sleep(CONNECT_RETRY_DELAY_SECONDS)
     # Sleep for a minute for good measure
     logging.info("Sleeping for 1 minute to allow cluster to settle before establishing JMX connections");

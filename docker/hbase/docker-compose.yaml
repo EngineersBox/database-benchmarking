@@ -98,7 +98,7 @@ services:
     container_name: otel-hostmetrics
     image: otel/opentelemetry-collector-contrib:0.101.0
     volumes:
-      - "/var/log/otel_hostmetrics:/var/log/otel"
+      - "/var/log/otel/hostmetrics:/var/log/otel"
       - "/var/lib/cluster/config/otel/otel-instance-config.yaml:/etc/otelcol-contrib/config.yaml"
       - /var/run/docker.sock:/var/run/docker.sock 
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup 
@@ -122,6 +122,7 @@ services:
     image: otel/opentelemetry-ebpf-kernel-collector:v0.10.2
     command: ["--log-console"]
     volumes:
+      - "/var/log/otel/kernel:/var/log/otel"
       - /var/run/docker.sock:/var/run/docker.sock 
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup 
       - /etc:/hostfs/etc 
