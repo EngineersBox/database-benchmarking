@@ -180,7 +180,13 @@ export HBASE_OTEL_TRACING_ENABLED=true
 export OTEL_TRACES_EXPORTER="otlp"
 export OTEL_METRICS_EXPORTER="none"
 export OTEL_LOGS_EXPORTER="none"
-#
+
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+export OTEL_EXPORTER_OTLP_INSECURE=true
+
+export HBASE_OTEL_OPTS="-Dotel.javaagent.configuration-file=/etc/otel/otel.properties"
+
 # `OTEL_SERVICE_NAME`, required. Specify "resource attributes", and specifically the `service.name`,
 # as a unique value for each HBase process. OpenTelemetry allows for specifying this value in one
 # of two ways, via environment variables with the `OTEL_` prefix, or via system properties with the
@@ -192,18 +198,18 @@ export OTEL_LOGS_EXPORTER="none"
 # container template -- replace use of `HBASE_FOO_OPTS` with the standard `OTEL_SERVICE_NAME` and/or
 # `OTEL_RESOURCE_ATTRIBUTES` environment variables. For further details, see
 # https://github.com/open-telemetry/opentelemetry-java/tree/v1.15.0/sdk-extensions/autoconfigure#opentelemetry-resource
-export HBASE_CANARY_OPTS="${HBASE_CANARY_OPTS} -Dotel.resource.attributes=service.name=hbase-canary"
-export HBASE_HBCK_OPTS="${HBASE_HBCK_OPTS} -Dotel.resource.attributes=service.name=hbase-hbck"
-export HBASE_HBTOP_OPTS="${HBASE_HBTOP_OPTS} -Dotel.resource.attributes=service.name=hbase-hbtop"
-export HBASE_JSHELL_OPTS="${HBASE_JSHELL_OPTS} -Dotel.resource.attributes=service.name=hbase-jshell"
-export HBASE_LTT_OPTS="${HBASE_LTT_OPTS} -Dotel.resource.attributes=service.name=hbase-loadtesttool"
-export HBASE_MASTER_OPTS="${HBASE_MASTER_OPTS} -Dotel.resource.attributes=service.name=hbase-master"
-export HBASE_PE_OPTS="${HBASE_PE_OPTS} -Dotel.resource.attributes=service.name=hbase-performanceevaluation"
-export HBASE_REGIONSERVER_OPTS="${HBASE_REGIONSERVER_OPTS} -Dotel.resource.attributes=service.name=hbase-regionserver"
-export HBASE_REST_OPTS="${HBASE_REST_OPTS} -Dotel.resource.attributes=service.name=hbase-rest"
-export HBASE_SHELL_OPTS="${HBASE_SHELL_OPTS} -Dotel.resource.attributes=service.name=hbase-shell"
-export HBASE_THRIFT_OPTS="${HBASE_THRIFT_OPTS} -Dotel.resource.attributes=service.name=hbase-thrift"
-export HBASE_ZOOKEEPER_OPTS="${HBASE_ZOOKEEPER_OPTS} -Dotel.resource.attributes=service.name=hbase-zookeeper"
+export HBASE_CANARY_OPTS="${HBASE_OTEL_OPTS} ${HBASE_CANARY_OPTS} -Dotel.resource.attributes=service.name=hbase-canary,node=@@NODE_ID@@"
+export HBASE_HBCK_OPTS="${HBASE_OTEL_OPTS} ${HBASE_HBCK_OPTS} -Dotel.resource.attributes=service.name=hbase-hbck,node=@@NODE_ID@@"
+export HBASE_HBTOP_OPTS="${HBASE_OTEL_OPTS} ${HBASE_HBTOP_OPTS} -Dotel.resource.attributes=service.name=hbase-hbtop,node=@@NODE_ID@@"
+export HBASE_JSHELL_OPTS="${HBASE_OTEL_OPTS} ${HBASE_JSHELL_OPTS} -Dotel.resource.attributes=service.name=hbase-jshell,node=@@NODE_ID@@"
+export HBASE_LTT_OPTS="${HBASE_OTEL_OPTS} ${HBASE_LTT_OPTS} -Dotel.resource.attributes=service.name=hbase-loadtesttool,node=@@NODE_ID@@"
+export HBASE_MASTER_OPTS="${HBASE_OTEL_OPTS} ${HBASE_MASTER_OPTS} -Dotel.resource.attributes=service.name=hbase-master,node=@@NODE_ID@@"
+export HBASE_PE_OPTS="${HBASE_OTEL_OPTS} ${HBASE_PE_OPTS} -Dotel.resource.attributes=service.name=hbase-performanceevaluation,node=@@NODE_ID@@"
+export HBASE_REGIONSERVER_OPTS="${HBASE_OTEL_OPTS} ${HBASE_REGIONSERVER_OPTS} -Dotel.resource.attributes=service.name=hbase-regionserver,node=@@NODE_ID@@"
+export HBASE_REST_OPTS="${HBASE_OTEL_OPTS} ${HBASE_REST_OPTS} -Dotel.resource.attributes=service.name=hbase-rest,node=@@NODE_ID@@"
+export HBASE_SHELL_OPTS="${HBASE_OTEL_OPTS} ${HBASE_SHELL_OPTS} -Dotel.resource.attributes=service.name=hbase-shell,node=@@NODE_ID@@"
+export HBASE_THRIFT_OPTS="${HBASE_OTEL_OPTS} ${HBASE_THRIFT_OPTS} -Dotel.resource.attributes=service.name=hbase-thrift,node=@@NODE_ID@@"
+export HBASE_ZOOKEEPER_OPTS="${HBASE_OTEL_OPTS} ${HBASE_ZOOKEEPER_OPTS} -Dotel.resource.attributes=service.name=hbase-zookeeper,node=@@NODE_ID@@"
 
 #
 # JDK11+ JShell

@@ -8,6 +8,8 @@ services:
       - /var/lib/cluster/config/hbase:/var/lib/hbase/conf
       # HDFS
       - /var/lib/hadoop:/var/lib/hadoop
+      # OTEL
+      - /var/lib/cluster/config/hbase/otel.properties:/etc/otel/otel.properties
     mem_limit: 16gb
     memswap_limit: 16gb
     mem_swappiness: 0
@@ -32,6 +34,8 @@ services:
       - /var/lib/cluster/zookeeper:/etc/zookeeper
       # HDFS
       - /var/lib/hadoop:/var/lib/hadoop
+      # OTEL
+      - /var/lib/cluster/config/hbase/otel.properties:/etc/otel/otel.properties
     mem_limit: 16gb
     memswap_limit: 16gb
     mem_swappiness: 0
@@ -55,6 +59,8 @@ services:
       - /var/lib/cluster/config/hbase:/var/lib/hbase/conf
       # HDFS
       - /var/lib/hadoop:/var/lib/hadoop
+      # OTEL
+      - /var/lib/cluster/config/hbase/otel.properties:/etc/otel/otel.properties
     mem_limit: 16gb
     memswap_limit: 16gb
     mem_swappiness: 0
@@ -81,6 +87,8 @@ services:
       - /var/lib/cluster/config/hbase:/var/lib/hbase/conf
       # HDFS
       - /var/lib/hadoop:/var/lib/hadoop
+      # OTEL
+      - /var/lib/cluster/config/hbase/otel.properties:/etc/otel/otel.properties
     mem_limit: 16gb
     memswap_limit: 16gb
     mem_swappiness: 0
