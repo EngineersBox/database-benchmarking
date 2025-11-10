@@ -66,32 +66,32 @@ ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 # Docker cache avoidance to detect new commits
 ARG CACHEBUST=0
 
-# WORKDIR /var/lib
-# RUN git clone "$REPOSITORY" hbase_repo
+WORKDIR /var/lib
+RUN git clone "$REPOSITORY" hbase_repo
 
 WORKDIR /var/lib/hbase_repo
-# RUN git checkout "$BRANCH"
-# RUN if [ "x$COMMIT" != "x" ]; then git checkout "$COMMIT"; fi
-#
-# # Maven settings for auth to repos
-# COPY ["$M2_SETTINGS_PATH", "/opt/.m2/"]
-#
-# # Build the artifacts
-# RUN mvn -s /opt/.m2/settings.xml clean package -DskipTests
-# FIXME: This fails for some reason
-# RUN mvn -s /opt/.m2/settings.xml assembly:single -DskipTests -Dhadoop.profile=3.0
-#
-# # Remove maven settings to avoid caching creds in image
-# RUN rm -f /opt/.m2/settings.xml
-#
-# RUN export BASE_VERSION=$(xmllint --xpath 'string(/project/version/@value)' pom.xml)
-# RUN tar -xvzf "build/apache-hbase-$BASE_VERSION-SNAPSHOT-bin.tar.gz" --directory=/var/lib
-# RUN mv /var/lib/apache-hbase-$BASE_VERSION-SNAPSHOT /var/lib/hbase/
+RUN git checkout "$BRANCH"
+RUN if [ "x$COMMIT" != "x" ]; then git checkout "$COMMIT"; fi
 
-RUN wget "https://dlcdn.apache.org/hbase/2.6.3/hbase-2.6.3-hadoop3-bin.tar.gz"
-RUN tar -xvzf "hbase-2.6.3-hadoop3-bin.tar.gz" --directory=/var/lib
-RUN mv /var/lib/hbase-2.6.3-hadoop3 /var/lib/hbase
-RUN rm -f "hbase-2.6.3-hadoop3-bin.tar.gz"
+# Maven settings for auth to repos
+COPY ["$M2_SETTINGS_PATH", "/opt/.m2/"]
+
+# Build the artifacts
+RUN mvn -s /opt/.m2/settings.xml -DskipTests -Dhadoop.profile=3.0 clean install
+RUN mvn -s /opt/.m2/settings.xml -DskipTests -Dhadoop.profile=3.0 package assembly:single
+
+# Remove maven settings to avoid caching creds in image
+RUN rm -f /opt/.m2/settings.xml
+
+RUN export BASE_VERSION=$(xmllint --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="revision"]/text()' pom.xml)
+RUN tar -xvzf "hbase-assembly/target/apache-hbase-$BASE_VERSION-bin.tar.gz" --directory=/var/lib
+RUN mv /var/lib/apache-hbase-$BASE_VERSION /var/lib/hbase/
+
+# RUN wget "https://dlcdn.apache.org/hbase/2.6.3/hbase-2.6.3-hadoop3-bin.tar.gz"
+# RUN tar -xvzf "hbase-2.6.3-hadoop3-bin.tar.gz" --directory=/var/lib
+# RUN mv /var/lib/hbase-2.6.3-hadoop3 /var/lib/hbase
+# RUN rm -f "hbase-2.6.3-hadoop3-bin.tar.gz"
+
 RUN rm -rf /var/lib/hbase/conf
 RUN mkdir -p /var/lib/hbase/logs
 RUN chown -R hbase:hbase /var/lib/hbase
