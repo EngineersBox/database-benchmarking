@@ -83,10 +83,6 @@ RUN mvn -s /opt/.m2/settings.xml -DskipTests -Dhadoop.profile=3.0 package assemb
 # Remove maven settings to avoid caching creds in image
 RUN rm -f /opt/.m2/settings.xml
 
-# RUN export BUILD_VERSION=$(xmllint --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="revision"]/text()' pom.xml) \
-#     && tar -xvzf "hbase-assembly/target/apache-hbase-$BUILD_VERSION-bin.tar.gz" --directory=/var/lib \
-#     && mv /var/lib/apache-hbase-$BUILD_VERSION /var/lib/hbase/
-
 RUN mkdir -p /var/lib/hbase
 RUN find /var/lib/hbase_repo/hbase-assembly/target -iname '*.tar.gz' -not -iname '*client*' \
     | head -n 1 \
