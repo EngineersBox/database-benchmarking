@@ -87,6 +87,7 @@ RUN rm -f /opt/.m2/settings.xml
 #     && tar -xvzf "hbase-assembly/target/apache-hbase-$BUILD_VERSION-bin.tar.gz" --directory=/var/lib \
 #     && mv /var/lib/apache-hbase-$BUILD_VERSION /var/lib/hbase/
 
+RUN mkdir -p /var/lib/hbase
 RUN find /var/lib/hbase_repo/hbase-assembly/target -iname '*.tar.gz' -not -iname '*client*' \
     | head -n 1 \
     | xargs -I{} tar xzf {} --strip-components 1 -C /var/lib/hbase
