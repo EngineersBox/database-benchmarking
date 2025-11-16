@@ -164,7 +164,8 @@ export HBASE_MANAGES_ZK=true
 # `HBASE_OTEL_TRACING_ENABLED`, required. Enable attaching the opentelemetry javaagent to the
 # process via support provided by `bin/hbase`. When this value us `false`, the agent is not added
 # to the process launch arguments and all further OpenTelemetry configuration is ignored.
-export HBASE_OTEL_TRACING_ENABLED=true
+# TODO: Revert to true once hbase with kairos is stable
+export HBASE_OTEL_TRACING_ENABLED=false
 #
 # `OPENTELEMETRY_JAVAAGENT_PATH`, optional. Override the javaagent provided by HBase in `lib/trace`
 # with an alternate. Use when you need to upgrade the agent version or swap out the official one

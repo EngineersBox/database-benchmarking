@@ -31,7 +31,7 @@
     <server>
       <id>gh-kairos</id>
       <username>engineersbox</username>
-      <password>TOKEN</password>
+      <password>@@TOKEN@@</password>
     </server>
   </servers>
 </settings>

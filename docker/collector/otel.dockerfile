@@ -10,5 +10,5 @@ RUN mkdir -p /var/lib/otel
 WORKDIR /var/lib/otel
 RUN wget "https://github.com/open-telemetry/opentelemetry-java-contrib/releases/download/$OTEL_JMX_JAR_VERSION/opentelemetry-jmx-metrics.jar"
 
-COPY ../../scripts/run-otelcol.sh /otel-lgtm/run-otelcol.sh
+COPY scripts/otel/run-otelcol.sh /otel-lgtm/run-otelcol.sh
 WORKDIR /otel-lgtm
