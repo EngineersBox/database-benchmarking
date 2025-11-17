@@ -2,6 +2,6 @@
 
 set -o errexit -o pipefail -o noclobber
 
-CONTAINER_NAME=${1:-"hbase_regionserver"}
+HBASE_CONTAINER_NAME=${1:-"regionserver"}
 
-sudo docker exec -it "$CONTAINER_NAME" /var/lib/cluster/bin/hbase shell
+sudo docker exec -it "hbase_$HBASE_CONTAINER_NAME" /var/lib/cluster/bin/hbase shell
