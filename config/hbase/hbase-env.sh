@@ -189,7 +189,7 @@ export OTEL_EXPORTER_OTLP_INSECURE=true
 
 export HBASE_OTEL_OPTS="-Dotel.javaagent.configuration-file=/etc/otel/otel.properties"
 
-export HBASE_GLOBAL_OPTS="-Dkairos.library.path=/var/lib/kairos/ ${HBASE_OTEL_OPTS}"
+export HBASE_GLOBAL_OPTS="-Dkairos.library.path=/var/lib/kairos/x86_64-unknown-linux-gnu ${HBASE_OTEL_OPTS}"
 
 # `OTEL_SERVICE_NAME`, required. Specify "resource attributes", and specifically the `service.name`,
 # as a unique value for each HBase process. OpenTelemetry allows for specifying this value in one
