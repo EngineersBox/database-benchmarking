@@ -28,7 +28,7 @@
 # export JAVA_HOME=/usr/java/jdk1.8.0/
 
 # Extra Java CLASSPATH elements.  Optional.
-# export HBASE_CLASSPATH=
+export HBASE_CLASSPATH="/var/lib/hbase/lib/kairos/*"
 
 # The maximum amount of heap to use. Default is left to JVM default.
 # export HBASE_HEAPSIZE=1G
