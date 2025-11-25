@@ -98,10 +98,11 @@ RUN mkdir -p /var/lib/hbase/logs
 RUN chown -R hbase:hbase /var/lib/hbase
 
 WORKDIR /var/lib/hbase/lib
-RUN wget https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar
-RUN wget https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.33/slf4j-api-1.7.33.jar
+# RUN wget https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar
+# RUN wget https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.33/slf4j-api-1.7.33.jar
 RUN wget https://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/1.7.33/jcl-over-slf4j-1.7.33.jar
 RUN wget https://repo1.maven.org/maven2/org/slf4j/jul-to-slf4j/1.7.33/jul-to-slf4j-1.7.33.jar
+RUN wget https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-1.2-api/2.17.2/log4j-1.2-api-2.17.2.jar
 RUN wget https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.17.2/log4j-api-2.17.2.jar 
 RUN wget https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.25.2/log4j-api-2.25.2.jar 
 RUN wget https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.17.2/log4j-core-2.17.2.jar
