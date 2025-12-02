@@ -1,7 +1,7 @@
 services:
   hbase_master:
     container_name: hbase_master
-    image: ghcr.io/engineersbox/hbase:2.6.3-kairos
+    image: ghcr.io/engineersbox/hbase:2.6-kairos
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/cluster/logs:/var/lib/hbase/logs
@@ -28,7 +28,7 @@ services:
       - hbase_master
   hbase_zookeeper:
     container_name: hbase_zookeeper
-    image: ghcr.io/engineersbox/hbase:2.6.3-kairos
+    image: ghcr.io/engineersbox/hbase:2.6-kairos
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/cluster/logs:/var/lib/hbase/logs
@@ -56,7 +56,7 @@ services:
       - hbase_zookeeper
   hbase_regionserver:
     container_name: hbase_regionserver
-    image: ghcr.io/engineersbox/hbase:2.6.3-kairos
+    image: ghcr.io/engineersbox/hbase:2.6-kairos
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/cluster/logs:/var/lib/hbase/logs
@@ -86,7 +86,7 @@ services:
       - hbase_regionserver
   hbase_masterbackup:
     container_name: hbase_masterbackup 
-    image: ghcr.io/engineersbox/hbase:2.6.3-kairos
+    image: ghcr.io/engineersbox/hbase:2.6-kairos
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/cluster/logs:/var/lib/hbase/logs

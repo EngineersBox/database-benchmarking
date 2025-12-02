@@ -2,7 +2,7 @@ FROM debian:bookworm-slim
 LABEL org.opencontainers.image.source=https://github.com/EngineersBox/database-benchmarking
 
 ARG REPOSITORY="https://github.com/EngineersBox/hbase.git"
-ARG BRANCH="2.6.3-kairos"
+ARG BRANCH="2.6-kairos"
 ARG COMMIT=""
 ARG UID=1000
 ARG GID=1000
@@ -70,7 +70,7 @@ WORKDIR /var/lib
 RUN git clone "$REPOSITORY" hbase_repo
 
 WORKDIR /var/lib/hbase_repo
-RUN git checkout "$BRANCH"
+RUN git fetch && git checkout "$BRANCH"
 RUN if [ "x$COMMIT" != "x" ]; then git checkout "$COMMIT"; fi
 
 # Maven settings for auth to repos
