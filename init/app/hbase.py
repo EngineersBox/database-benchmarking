@@ -68,7 +68,7 @@ class HBaseAppType(Enum):
     HBase = "hbase"
 
 class HBaseNodeRole(Enum):
-    HBASE_DATA = None, HBaseAppType.HBase
+    HBASE_REGION_SERVER = None, HBaseAppType.HBase
     HBASE_ZOOKEEPER = hbaseZookeeperInit, HBaseAppType.HBase
     HBASE_MASTER = None, HBaseAppType.HBase
     HBASE_BACKUP_MASTER = None, HBaseAppType.HBase

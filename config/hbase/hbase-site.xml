@@ -21,7 +21,7 @@
     </property>
     <property>
         <name>hbase.zookeeper.quorum</name>
-        <value>@@ZK_NODE_IPS@@</value>
+        <value>@@ZOOKEEPER_NODE_IPS@@</value>
     </property>
     <property>
         <name>hbase.zookeeper.property.dataDir</name>

@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-source /var/lib/cluster/node_env
 source /var/lib/cluster/scripts/logging.sh
 
 init_logger \
@@ -12,8 +11,8 @@ function on_error() {
     log_fatal "Failed to run benchmarking for HBase"
 }
 
+set -o errexit -o pipefail -o noclobber
 trap on_error ERR
-set -ex
 
 if [[ "$#" -lt 1 ]]; then
     log_error "Usage: run.sh <workload file path> [table name] [column family name]"
@@ -24,10 +23,13 @@ WORKLOAD="$1"
 TABLE="${2:-"usertable"}"
 COLUMN_FAMILY="${3:-"family"}"
 
+log_info "Sourcing node environment"
+source /var/lib/cluster/node_env
+
 pushd /var/lib/cluster
 
 log_info "Creating HBase $TABLE with even splits across all $region_server_count region servers"
-echo "n_splits = $((10 * region_server_count)); create '$TABLE', '$COLUMN_FAMILY', {SPLITS => (1..n_splits).map {|i| \"user#{1000+i*(9999-1000)/n_splits}\"}}" | ./scripts/hbase_shell.sh
+echo "n_splits = $((10 * region_server_count)); create '$TABLE', '$COLUMN_FAMILY', {SPLITS => (1..n_splits).map {|i| \"user#{1000+i*(9999-1000)/n_splits}\"}}" | ./scripts/hbase/hbase_shell.sh
 
 popd
 
