@@ -1,5 +1,4 @@
 log
-apache-cassandra-*.tar.gz*
 opentelemetry-*.jar
 /cassandra
 **/*.pyc
@@ -9,3 +8,4 @@ settings.xml
 # Added by cargo
 
 /target
+*.tar.gz*

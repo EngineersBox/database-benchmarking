@@ -8,12 +8,13 @@ wget "https://github.com/open-telemetry/opentelemetry-java-instrumentation/relea
 wget "https://github.com/open-telemetry/opentelemetry-java-contrib/releases/download/$OTEL_JMX_JAR_VERSION/opentelemetry-jmx-metrics.jar"
 
 tar -czf "$ARCHIVE_NAME.tar.gz" --group=cluster --owner=cluster \
+    benchmarking/ \
     config/ \
     docker/ \
     init/ \
+    etc/ \
     scripts/ \
     stress.yaml \
-    ycsb.md \
     opentelemetry-javaagent.jar \
     opentelemetry-jmx-metrics.jar
 
