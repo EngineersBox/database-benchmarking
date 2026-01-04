@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
-echo "[INFO] Overlaying etc/** scripts into node filesystem /etc"
-sudo cp -r /var/lib/cluster/etc/** /etc/.
+source /var/lib/cluster/scripts/logging.sh
 
-echo "[INFO] Updating and installing dependencies"
+init_logger --journal --tag node_setup
+
+log_info "Overlaying etc/** scripts into node filesystem /etc"
+sudo cp -r /var/lib/cluster/etc/** /etc/.
+log_info "Ensuring consistent permissions on /etc/profile.d/10-utils.sh"
+sudo chmod root:root /etc/profile.d/10-utils.sh
+
+log_info "Updating and installing dependencies"
 sudo apt-get update -y
 sudo apt-get install -y python3-pip python3-venv
 python3 -m pip install -r /var/lib/cluster/init/requirements.txt
 
-echo "[INFO] Finished setup"
+log_info "Finished setup"
