@@ -23,4 +23,4 @@ create table ycsb.usertable (
 EOM
 
 # CQLSH_PYTHON="$(which python3.6)" ~/repos/cassandra/bin/cqlsh -e "$CQL_SCRIPT}"
-docker exec cassandra /var/lib/cassandra/bin/cqlsh -e "$CQL_SCRIPT"
+/var/lib/cluster/scripts/cassandra/cqlsh.sh -e "$CQL_SCRIPT"

@@ -9,7 +9,7 @@ class HBaseAppType(Enum):
     HBase = "hbase"
 
 class HBaseNodeRole(Enum):
-    HBASE_DATA = "hbase_data", "hbase_regionserver", HBaseAppType.HBase
+    HBASE_REGION_SERVER = "hbase_region_server", "hbase_regionserver", HBaseAppType.HBase
     HBASE_ZOOKEEPER = "hbase_zookeeper", "hbase_zookeeper", HBaseAppType.HBase
     HBASE_MASTER = "hbase_master", "hbase_master", HBaseAppType.HBase
     HBASE_BACKUP_MASTER = "hbase_backup_master", "hbase_backupmaster", HBaseAppType.HBase
