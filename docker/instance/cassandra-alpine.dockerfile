@@ -73,7 +73,7 @@ ENV CASSANDRA_HOME /var/lib/cassandra
 ENV CASSANDRA_CONF /etc/cassandra
 RUN echo "export PATH=\"$CASSANDRA_HOME/bin:\$PATH\""
 
-COPY scripts/cassandra/docker-entrypoint.sh /usr/local/bin
+COPY docker-entrypoint.sh /usr/local/bin
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 USER cassandra

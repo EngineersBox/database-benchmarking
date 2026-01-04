@@ -95,8 +95,6 @@ RUN wget "https://github.com/open-telemetry/opentelemetry-java-contrib/releases/
 RUN chown -R cassandra:cassandra /var/lib/otel
 
 WORKDIR /
-# COPY scripts/cassandra/docker-entrypoint.sh /usr/local/bin
-# ENTRYPOINT ["docker-entrypoint.sh"]
 
 USER cassandra
 # 7000: intra-node communication
