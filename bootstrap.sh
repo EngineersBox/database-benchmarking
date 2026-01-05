@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 source /var/lib/cluster/scripts/logger.sh
-
 init_logger --journal --tag bootstrap
 
 set -o errexit -o pipefail -o noclobber

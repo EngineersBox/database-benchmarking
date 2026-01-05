@@ -1,5 +1,5 @@
 from enum import Enum
-import os, time, logging
+import time, logging
 from typing import Any, Callable, Optional
 from cassandra.cluster import Cluster, Host
 

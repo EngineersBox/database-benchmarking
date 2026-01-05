@@ -2,4 +2,4 @@
 
 set -o errexit -o pipefail -o noclobber
 
-hbase shell $@
+hbase.sh shell $@ <&0

@@ -29,7 +29,7 @@ source /var/lib/cluster/node_env
 pushd /var/lib/cluster
 
 log_info "Creating HBase $TABLE with even splits across all $region_server_count region servers"
-echo "n_splits = $((10 * region_server_count)); create '$TABLE', '$COLUMN_FAMILY', {SPLITS => (1..n_splits).map {|i| \"user#{1000+i*(9999-1000)/n_splits}\"}}" | ./scripts/hbase/hbase_shell.sh
+echo "n_splits = $((10 * region_server_count)); create '$TABLE', '$COLUMN_FAMILY', {SPLITS => (1..n_splits).map {|i| \"user#{1000+i*(9999-1000)/n_splits}\"}}" | /var/lib/cluster/scripts/hbase/hbase_shell.sh
 
 popd
 
