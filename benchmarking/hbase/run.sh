@@ -15,13 +15,14 @@ set -o errexit -o pipefail -o noclobber
 trap on_error ERR
 
 if [[ "$#" -lt 1 ]]; then
-    log_error "Usage: run.sh <workload file path> [table name] [column family name]"
+    log_error "Usage: run.sh <load workload path> <run workload path> [table name] [column family name]"
     exit 1
 fi
 
-WORKLOAD="$1"
-TABLE="${2:-"usertable"}"
-COLUMN_FAMILY="${3:-"family"}"
+LOAD_WORKLOAD="$1"
+RUN_WORKLOAD="$2"
+TABLE="${3:-"usertable"}"
+COLUMN_FAMILY="${4:-"family"}"
 
 log_info "Sourcing node environment"
 source /var/lib/cluster/node_env
@@ -35,22 +36,24 @@ popd
 
 pushd /var/lib/cluster/ycsb
 
-log_info "Warming up HBase and loading $WORKLOAD data"
-bin/ycsb load hbase2 \
-    -P "$WORKLOAD" \
+log_info "Warming up HBase and loading $LOAD_WORKLOAD data"
+sudo bin/ycsb load hbase2 \
+    -P "$LOAD_WORKLOAD" \
+    -s \
     -cp /var/lib/cluster/config/hbase \
     -p table="$TABLE" \
     -p columnfamily="$COLUMN_FAMILY"
 log_info "Completed warm up"
 
-log_info "Running workload $WORKLOAD"
-bin/ycsb run hbase2 \
-    -P "$WORKLOAD" \
+log_info "Running workload $RUN_WORKLOAD"
+sudo bin/ycsb run hbase2 \
+    -P "$RUN_WORKLOAD" \
+    -s \
     -cp /var/lib/cluster/config/hbase \
     -p table="$TABLE" \
     -p columnfamily="$COLUMN_FAMILY" \
-    -p clientbuffering=true \
-    -p durability=true
+    -p threads=4 \
+    -p clientbuffering=true
 log_info "Completed benchmarking"
 
 popd

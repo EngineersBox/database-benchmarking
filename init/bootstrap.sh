@@ -11,6 +11,7 @@ log_info "Ensuring consistent permissions on /etc/profile.d/10-utils.sh"
 sudo chown root:root /etc/profile.d/10-utils.sh
 
 log_info "Creating private SSH key"
+mkdir -p ~/.ssh
 geni-get key > ~/.ssh/id_rsa
 sudo chmod 600 ~/.ssh/id_rsa
 log_info "Creating public SSH key and marking as authorized"
@@ -19,7 +20,10 @@ sudo chmod 644 ~/.ssh/authorized_keys
 
 log_info "Updating and installing dependencies"
 sudo apt-get update -y
-sudo apt-get install -y python3-pip python3-venv
+sudo apt-get install -y \
+    python3-pip \
+    python3-venv \
+    maven
 
 log_info "Creating venv for bootstrap"
 pushd /var/lib/cluster/init
