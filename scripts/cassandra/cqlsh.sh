@@ -24,10 +24,10 @@ if [ "$is_remote" -eq 1 ]; then
     log_warn "No Cassandra container on host machine, assuming remote execution"
     get_remote_node 
     log_info "Executing on remote Cassandra node: $target"
-    sudo ssh "$target" /var/lib/cluster/scripts/cassandra/cqlsh.sh $@ <&0
+    sudo ssh "$target" /var/lib/cluster/scripts/cassandra/cqlsh.sh "$@" <&0
 else
     log_info "Executing in container: $target"
     docker_opts=""
     tty_sensitive_docker_opts
-    sudo docker exec "$docker_opts" "$target" /var/lib/cassandra/bin/cqlsh $@ <&0
+    sudo docker exec "$docker_opts" "$target" /var/lib/cassandra/bin/cqlsh "$@" <&0
 fi
