@@ -15,13 +15,14 @@ set -o errexit -o pipefail -o noclobber
 trap on_error ERR
 
 function print_help() {
-    log_info "Usage: hbase/run.sh [<options>]"
+    log_info "Usage: hbase/run.sh <required> [<options>]"
+    log_info "Required:"
+    log_info "    -r | --run_workload=<path>  Path to workload for running benchmark [REQUIRED]"
     log_info "Options:"
     log_info "    -h | --help                 Print this help message"
-    log_info "    -l | --load_workload=<path> Path to workload for loading benchmarking data (REQUIRED)"
-    log_info "    -r | --run_workload=<path>  Path to workload for running benchmark (REQUIRED)"
-    log_info "    -t | --table=<name>         HBase benchmarking table name (default: usertable)"
-    log_info "    -c | --column_family=<name> HBase benchmarking column family name (default: family)"
+    log_info "    -l | --load_workload=<path> Path to workload for loading benchmarking data, skips loading if not specified"
+    log_info "    -t | --table=<name>         HBase benchmarking table name [Default: usertable]"
+    log_info "    -c | --column_family=<name> HBase benchmarking column family name [Default: family]"
 }
 
 # Note that options with a ':' require an argument
@@ -74,10 +75,6 @@ while true; do
     esac
 done
 
-missing_parameters=""
-if [ -z "$load_workload" ]; then
-    missing_parameters="$missing_parameters --load_workload"
-fi
 if [ -z "$run_workload" ]; then
     missing_parameters="$missing_parameters --run_workload"
 fi
@@ -91,22 +88,32 @@ log_info "Sourcing node environment"
 source /var/lib/cluster/node_env
 
 pushd /var/lib/cluster
+set +e
 
 log_info "Creating HBase $table with even splits across all $region_server_count region servers"
-echo "n_splits = $((10 * region_server_count)); create '$table', '$column_family', {SPLITS => (1..n_splits).map {|i| \"user#{1000+i*(9999-1000)/n_splits}\"}}" | /var/lib/cluster/scripts/hbase/hbase_shell.sh
+echo "n_splits = $((10 * region_server_count)); create '$table', '$column_family', {SPLITS => (1..n_splits).map {|i| \"user#{1000+i*(9999-1000)/n_splits}\"}}" | /var/lib/cluster/scripts/hbase/hbase_shell.sh -n
+table_exists=$?
+if [ "$table_exists" -ne 0 ]; then
+    log_info "Table $table already exists, skipping creation"
+fi
 
+set -e
 popd
 
 pushd /var/lib/cluster/ycsb
 
-log_info "Warming up HBase and loading $load_workload data"
-sudo bin/ycsb load hbase2 \
-    -P "$load_workload" \
-    -s \
-    -cp /var/lib/cluster/config/hbase \
-    -p table="$table" \
-    -p columnfamily="$column_family"
-log_info "Completed warm up"
+if [ -z "$load_workload" ]; then 
+    log_info "No load workload specified, skipping"
+else
+    log_info "Warming up HBase and loading $load_workload data"
+    sudo bin/ycsb load hbase2 \
+        -P "$load_workload" \
+        -s \
+        -cp /var/lib/cluster/config/hbase \
+        -p table="$table" \
+        -p columnfamily="$column_family"
+    log_info "Completed warm up"
+fi
 
 log_info "Running workload $run_workload"
 sudo bin/ycsb run hbase2 \

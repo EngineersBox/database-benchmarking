@@ -16,14 +16,15 @@ trap on_error ERR
 set -ex
 
 function print_help() {
-    log_info "Usage: cassandra/run.sh [<options>]"
+    log_info "Usage: cassandra/run.sh <required> [<options>]"
+    log_info "Required:"
+    log_info "    -r | --run_workload=<path>  Path to workload for running benchmark [REQUIRED]"
+    log_info "    -d | --driver_config=<path> Path to Cassandra driver configuration [REQUIRED]"
     log_info "Options:"
     log_info "    -h | --help                 Print this help message"
-    log_info "    -l | --load_workload=<path> Path to workload for loading benchmarking data (REQUIRED)"
-    log_info "    -r | --run_workload=<path>  Path to workload for running benchmark (REQUIRED)"
-    log_info "    -d | --driver_config=<path> Path to Cassandra driver configuration (REQUIRED)"
-    log_info "    -k | --keyspace=<name>      HBase benchmarking keyspace name (default: ycsb)"
-    log_info "    -t | --table=<name>         HBase benchmarking table name (default: usertable)"
+    log_info "    -l | --load_workload=<path> Path to workload for loading benchmarking data, skips loading if not supplied"
+    log_info "    -k | --keyspace=<name>      HBase benchmarking keyspace name [Default: ycsb]"
+    log_info "    -t | --table=<name>         HBase benchmarking table name [Default: usertable]"
 }
 
 # Note that options with a ':' require an argument
@@ -82,9 +83,6 @@ while true; do
 done
 
 missing_parameters=""
-if [ -z "$load_workload" ]; then
-    missing_parameters="$missing_parameters --load_workload"
-fi
 if [ -z "$run_workload" ]; then
     missing_parameters="$missing_parameters --run_workload"
 fi
@@ -100,8 +98,8 @@ fi
 pushd /var/lib/cluster
 
 read -r -d '' CQL_SCRIPT << EOM
-create keyspace $keyspace with replication = {'class' : 'SimpleStrategy', 'replication_factor': 1 };
-create table $keyspace.$table (
+create keyspace if not exists $keyspace with replication = {'class' : 'SimpleStrategy', 'replication_factor': 1 };
+create table if not exists $keyspace.$table (
     y_id varchar primary key,
     field0 varchar,
     field1 varchar,
@@ -116,19 +114,23 @@ create table $keyspace.$table (
 ) with compaction = {'class': 'UnifiedCompactionStrategy'} and memtable = 'trie';
 EOM
 
-log_info "Creating keyspace $keyspace and table $table"
+log_info "Creating keyspace $keyspace and table $table if they don't exist"
 /var/lib/cluster/scripts/cassandra/cqlsh.sh -e "$CQL_SCRIPT"
 
 popd
 
 pushd /var/lib/cluster/ycsb
 
-log_info "Warming up Cassandra and loading $load_workload data"
-sudo bin/ycsb load cassandra \
-    -P "$load_workload" \
-    -s \
-    -p cassandra.driverconfig=/var/lib/cluster/ycsb/base_profile.dat
-log_info "Completed warm up"
+if [ -z "$load_workload" ]; then
+    log_info "No load workload specified, skipping"
+else
+    log_info "Warming up Cassandra and loading $load_workload data"
+    sudo bin/ycsb load cassandra \
+        -P "$load_workload" \
+        -s \
+        -p cassandra.driverconfig="$driver_config"
+    log_info "Completed warm up"
+fi
 
 log_info "Running workload $run_workload"
 sudo bin/ycsb run cassandra \
