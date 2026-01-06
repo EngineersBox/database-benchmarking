@@ -94,7 +94,7 @@ log_info "Creating HBase $table with even splits across all $region_server_count
 echo "n_splits = $((10 * region_server_count)); create '$table', '$column_family', {SPLITS => (1..n_splits).map {|i| \"user#{1000+i*(9999-1000)/n_splits}\"}}" | /var/lib/cluster/scripts/hbase/hbase_shell.sh -n
 table_exists=$?
 if [ "$table_exists" -ne 0 ]; then
-    log_info "Table $table already exists, skipping creation"
+    log_warn "Table $table already exists, skipping creation"
 fi
 
 set -e
