@@ -34,3 +34,4 @@ insertproportion=0
 
 requestdistribution=zipfian
 
+threadcount=16

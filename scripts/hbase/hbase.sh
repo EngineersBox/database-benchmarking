@@ -26,7 +26,9 @@ if [ "$is_remote" -eq 1 ]; then
     log_warn "No HBase container on host machine, assuming remote execution"
     get_regionserver
     log_info "Executing on remote region server: $target"
-    sudo ssh "$target" /var/lib/cluster/scripts/hbase/hbase.sh "$@" <&0
+    # Disable host key checking to prevent prompting to accept new key
+    # which allows this script to be used in automation
+    sudo ssh -oStrictHostKeyChecking=no "$target" /var/lib/cluster/scripts/hbase/hbase.sh "$@" <&0
 else
     log_info "Executing in container: $target"
     docker_opts=""
