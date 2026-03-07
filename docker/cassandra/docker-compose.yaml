@@ -21,6 +21,10 @@ services:
       - path: /var/lib/cluster/node_env
         required: true
     network_mode: host
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - seccomp=unconfined
   otel-hostmetrics:
     container_name: otel-hostmetrics
     image: otel/opentelemetry-collector-contrib:0.101.0

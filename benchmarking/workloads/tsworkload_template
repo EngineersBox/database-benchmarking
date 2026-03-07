@@ -67,7 +67,7 @@ timestampinterval=60
 # E.g. "sys.cpu" may be a single field or "metric" while there may be many
 # time series sharing that key (perhaps a host tag with "web01" and "web02"
 # as options).
-fieldcount=16
+fieldcount=64
 
 # The number of characters in the "metric" or "key".
 fieldlength=8

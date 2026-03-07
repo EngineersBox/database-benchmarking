@@ -4,8 +4,12 @@ ARCHIVE_NAME=$1
 OTEL_COLLECTOR_JAR_VERSION=v2.6.0
 OTEL_JMX_JAR_VERSION=v1.35.0
 
-wget "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/$OTEL_COLLECTOR_JAR_VERSION/opentelemetry-javaagent.jar"
-wget "https://github.com/open-telemetry/opentelemetry-java-contrib/releases/download/$OTEL_JMX_JAR_VERSION/opentelemetry-jmx-metrics.jar"
+if ! test -f opentelemetry-javaagent.jar; then
+    wget "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/$OTEL_COLLECTOR_JAR_VERSION/opentelemetry-javaagent.jar"
+fi
+if ! test -f opentelemetry-jmx-metrics.jar; then
+    wget "https://github.com/open-telemetry/opentelemetry-java-contrib/releases/download/$OTEL_JMX_JAR_VERSION/opentelemetry-jmx-metrics.jar"
+fi
 
 tar -czf "$ARCHIVE_NAME.tar.gz" --group=cluster --owner=cluster \
     benchmarking/ \
@@ -17,5 +21,3 @@ tar -czf "$ARCHIVE_NAME.tar.gz" --group=cluster --owner=cluster \
     stress.yaml \
     opentelemetry-javaagent.jar \
     opentelemetry-jmx-metrics.jar
-
-rm opentelemetry-javaagent.jar opentelemetry-jmx-metrics.jar

@@ -18,6 +18,10 @@ log_info "Creating public SSH key and marking as authorized"
 sudo ssh-keygen -y -f ~/.ssh/id_rsa | sudo tee ~/.ssh/id_rsa.pub | sudo tee -a ~/.ssh/authorized_keys > /dev/null
 sudo chmod 644 ~/.ssh/authorized_keys 
 
+log_info "Enabling tracing"
+sudo sysctl kernel.perf_event_paranoid=1
+sudo sysctl kernel.kptr_restrict=0
+
 log_info "Updating and installing dependencies"
 sudo apt-get update -y
 sudo apt-get install -y \

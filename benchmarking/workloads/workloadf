@@ -35,4 +35,4 @@ readmodifywriteproportion=0.5
 
 requestdistribution=zipfian
 
-threadcount=16
+threadcount=64

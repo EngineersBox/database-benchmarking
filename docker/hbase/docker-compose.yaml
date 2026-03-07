@@ -26,6 +26,10 @@ services:
     command: /bin/bash -c "/var/lib/hbase/bin/start.sh master"
     profiles:
       - hbase_master
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - seccomp=unconfined
   hbase_zookeeper:
     container_name: hbase_zookeeper
     image: ghcr.io/engineersbox/hbase:2.6
@@ -54,6 +58,10 @@ services:
     command: /bin/bash -c "/var/lib/hbase/bin/start.sh zookeeper"
     profiles:
       - hbase_zookeeper
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - seccomp=unconfined
   hbase_regionserver:
     container_name: hbase_regionserver
     image: ghcr.io/engineersbox/hbase:2.6
@@ -84,6 +92,10 @@ services:
     command: /bin/bash -c "/var/lib/hbase/bin/start.sh regionserver"
     profiles:
       - hbase_regionserver
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - seccomp=unconfined
   hbase_masterbackup:
     container_name: hbase_masterbackup 
     image: ghcr.io/engineersbox/hbase:2.6
@@ -110,6 +122,10 @@ services:
     command: /bin/bash -c "/var/lib/hbase/bin/start.sh masterbackup"
     profiles:
       - hbase_masterbackup
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - seccomp=unconfined
   otel-hostmetrics:
     container_name: otel-hostmetrics
     image: otel/opentelemetry-collector-contrib:0.101.0
