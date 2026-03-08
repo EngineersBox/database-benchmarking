@@ -16,8 +16,12 @@
         <value>org.apache.hadoop.hbase.regionserver.MasterFifoRpcSchedulerFactory</value>
     </property>
     <property>
+        <name>hbase.ipc.server.callqueue.type</name>
+        <value>fifo</value>
+    </property>
+    <property>
         <name>hbase.ipc.server.callqueue.read.ratio</name>
-        <value>0.3</value>
+        <value>0</value>
     </property>
     <property>
         <name>hbase.ipc.server.callqueue.scan.ratio</name>
