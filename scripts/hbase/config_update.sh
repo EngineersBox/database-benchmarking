@@ -104,8 +104,8 @@ function set_config_property() {
 
 log_info "Setting scheduler: $scheduler"
 set_config_property \
-    "hbase.region.server.rpc.scheduler.factory" \
-    "$scheduler"
+    "hbase.region.server.rpc.scheduler.factory.class" \
+    "org.apache.hadoop.hbase.regionserver.$scheduler"
 
 log_info "Setting queue type: $queue_type"
 set_config_property \
@@ -125,9 +125,10 @@ set_config_property  \
 popd
 
 log_info "Starting container $container"
-sudo docker stop "$container"
+sudo docker start "$container"
 
-log_info "Sleeping for 20 seconds for stability"
-sleep 20
+SLEEP_DURATION=10
+log_info "Sleeping for $SLEEP_DURATION seconds for stability"
+sleep $SLEEP_DURATION
 
 sudo docker ps -a

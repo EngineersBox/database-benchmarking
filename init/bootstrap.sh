@@ -27,7 +27,8 @@ sudo apt-get update -y
 sudo apt-get install -y \
     python3-pip \
     python3-venv \
-    maven
+    maven \
+    xmlstarlet
 
 log_info "Creating venv for bootstrap"
 pushd /var/lib/cluster/init
