@@ -19,5 +19,9 @@
         <name>dfs.namenode.checkpoint.dir</name>
         <value>file:///home/hadoop/hdfs/namesecondary</value>
     </property>
+    <property>
+        <name>dfs.datanode.max.transfer.threads</name>
+        <value>4096</value>
+    </property>
 </configuration>
 

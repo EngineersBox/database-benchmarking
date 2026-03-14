@@ -15,18 +15,20 @@ set -o errexit -o pipefail -o noclobber
 trap on_error ERR
 
 function print_help() {
-    log_info "Usage: scripts/hbase/run.sh <required> [<options>]"
+    log_info "Usage: scripts/hbase/run.sh <options>"
     log_info "Required:"
     log_info "    -n | --node_role=<role>       Container role to reload. Must be one of 'master' or 'regionserver'"
     log_info "    -s | --scheduler=<class name> Scheduler factory class to use"
     log_info "    -q | --queue_type=<type>      Queue type for the scheduler to use"
     log_info "    -r | --read_ratio=<float>     Percentage of all queues to dedicate to read operations"
     log_info "    -c | --scan_ratio=<float>     Percentage of read queues to dedicate to scan operations"
+    log_info "    -a | --handler_factor=<float> Division of queues to handlers"
+    log_info "    -d | --handler_count=<count>  Number of query handlers"
 }
 
 # Note that options with a ':' require an argument
-LONGOPTS=help,node_role:,scheduler:,queue_type:,read_ratio:,scan_ratio:
-OPTIONS=hn:s:q:r:c:
+LONGOPTS=help,node_role:,scheduler:,queue_type:,read_ratio:,scan_ratio:,handler_factor:,handler_count:
+OPTIONS=hn:s:q:r:c:a:d:
 
 # 1. Temporarily store output to be able to check for errors
 # 2. Activate quoting/enhanced mode (e.g. by writing out \u201c--options\u201d)
@@ -41,6 +43,8 @@ scheduler=""
 queue_type=""
 read_ratio=""
 scan_ratio=""
+handler_factor=""
+handler_count=""
 # Handle options in order and nicely split until we see --
 while true; do
     case "$1" in
@@ -66,6 +70,14 @@ while true; do
             ;;
         -c|--scan_ratio)
             scan_ratio="$2"
+            shift 2
+            ;;
+        -a|--handler_factor)
+            handler_factor="$2"
+            shift 2
+            ;;
+        -d|--handler_count)
+            handler_count="$2"
             shift 2
             ;;
         --)
@@ -121,6 +133,16 @@ log_info "Setting scan ratio: $scan_ratio"
 set_config_property  \
     "hbase.ipc.server.callqueue.scan.ratio" \
     "$scan_ratio"
+
+log_info "Setting handler factor: $handler_factor"
+set_config_property  \
+    "hbase.ipc.server.callqueue.handler.factor" \
+    "$handler_factor"
+
+log_info "Setting handler count: $handler_count"
+set_config_property  \
+    "hbase.regionserver.handler.count" \
+    "$handler_count"
 
 popd
 

@@ -28,9 +28,40 @@
         <value>0</value>
     </property>
     <property>
+        <name>hbase.ipc.server.callqueue.handler.factor</name>
+        <value>0.5</value>
+    </property>
+    <property>
         <name>hbase.regionserver.handler.count</name>
         <value>100</value>
     </property>
+    <property>
+        <name>hfile.block.cache.size</name>
+        <value>0.4</value>
+    </property>
+    <property>
+        <name>hbase.master.wait.on.regionservers.mintostart</name>
+        <value>2</name>
+    </property>
+    <property>
+        <name>hbase.master.wait.on.regionservers.maxtostart</name>
+        <value>2</name>
+    </property>
+    <!-- <property> -->
+    <!-- By default this is true -->
+    <!--     <name>hbase.ipc.client.tcpnodelay</name> -->
+    <!--     <value>true</name> -->
+    <!-- </property> -->
+    <!-- <property> -->
+    <!-- By default this is 0.4 -->
+    <!--     <name>hbase.regionserver.global.memstore.size</name> -->
+    <!--     <value>0.4</value> -->
+    <!-- </property> -->
+    <!-- <property> -->
+    <!-- By default this is 95% of hbase.regionserver.global.memstore.size -->
+    <!--     <name>hbase.regionserver.global.memstore.size.lower.limit</name> -->
+    <!--     <value></value> -->
+    <!-- </property> -->
     <!-- <property> -->
     <!-- By default this is Integer.MAX_VALUE  -->
     <!--     <name>hbase.htable.thread.max</name> -->
@@ -63,5 +94,13 @@
     <property>
         <name>hbase.zookeeper.property.dataDir</name>
         <value>/etc/zookeeper</value>
+    </property>
+    <property>
+        <name>hbase.master.hostname</name>
+        <value>@@MASTER_HOSTNAME@@</value>
+    </property>
+    <property>
+        <name>hbase.unsafe.regionserver.hostname</name>
+        <value>@@REGIONSERVER_HOSTNAME@@</value>
     </property>
 </configuration>

@@ -22,6 +22,11 @@ log_info "Enabling tracing"
 sudo sysctl kernel.perf_event_paranoid=1
 sudo sysctl kernel.kptr_restrict=0
 
+log_info "Disabling swap"
+sudo swapoff -a
+sudo sed -i.bak '/swap/ s/^\(.*\)$/#\1/g' /etc/fstab
+sudo systemctl mask swap.target
+
 log_info "Updating and installing dependencies"
 sudo apt-get update -y
 sudo apt-get install -y \
