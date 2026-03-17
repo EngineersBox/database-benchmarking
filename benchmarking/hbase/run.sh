@@ -17,7 +17,8 @@ trap on_error ERR
 function print_help() {
     log_info "Usage: hbase/run.sh <required> [<options>]"
     log_info "Required:"
-    log_info "    -r | --run_workload=<path>  Path to workload for running benchmark [REQUIRED]"
+    log_info "    -r | --run_workload=<path>  Path to workload for running benchmark"
+    log_info "    -b | --hbase_configs=<path> Path to file where each line is a set of configs"
     log_info "Options:"
     log_info "    -h | --help                 Print this help message"
     log_info "    -l | --load_workload=<path> Path to workload for loading benchmarking data, skips loading if not specified"
@@ -26,8 +27,8 @@ function print_help() {
 }
 
 # Note that options with a ':' require an argument
-LONGOPTS=help,load_workload:,run_workload:,table:,column_family:
-OPTIONS=hl:r:t:c:
+LONGOPTS=help,load_workload:,run_workload:,hbase_configs:,table:,column_family:
+OPTIONS=hl:r:b:t:c:
 
 # 1. Temporarily store output to be able to check for errors
 # 2. Activate quoting/enhanced mode (e.g. by writing out \u201c--options\u201d)
@@ -39,6 +40,7 @@ eval set -- "$PARSED"
 
 load_workload=""
 run_workload=""
+hbase_configs=""
 table="usertable"
 column_family="family"
 # Handle options in order and nicely split until we see --
@@ -54,6 +56,10 @@ while true; do
             ;;
         -r|--run_workload)
             run_workload="$2"
+            shift 2
+            ;;
+        -b|--hbase_configs)
+            hbase_configs="$2"
             shift 2
             ;;
         -t|--table)
@@ -77,6 +83,9 @@ done
 
 if [ -z "$run_workload" ]; then
     missing_parameters="$missing_parameters --run_workload"
+fi
+if [ -z "$hbase_configs" ]; then
+    missing_parameters="$missing_parameters --hbase_configs"
 fi
 if [ ! -z "$missing_parameters" ]; then
     log_fatal "Missing required parameters:$missing_parameters"
@@ -115,7 +124,17 @@ else
     log_info "Completed warm up"
 fi
 
-log_info "Running workload $run_workload"
+config_count=$(wc -l "$hbase_configs")
+log_info "Running workload $run_workload for $config_count configurations"
+
+function configure_hbase() {
+    while IFS="" read -r line || [ -n "$line" ]; do
+        for node_ip in "${ALL_IPS[@]}"; do
+            /var/lib/cluster/scripts/hbase/config_update.sh $line --target="$node_ip"
+        done
+    done
+}
+
 sudo bin/ycsb run hbase2 \
     -P "$run_workload" \
     -s \

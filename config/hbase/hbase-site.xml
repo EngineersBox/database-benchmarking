@@ -41,11 +41,11 @@
     </property>
     <property>
         <name>hbase.master.wait.on.regionservers.mintostart</name>
-        <value>2</name>
+        <value>2</value>
     </property>
     <property>
         <name>hbase.master.wait.on.regionservers.maxtostart</name>
-        <value>2</name>
+        <value>2</value>
     </property>
     <!-- <property> -->
     <!-- By default this is true -->
