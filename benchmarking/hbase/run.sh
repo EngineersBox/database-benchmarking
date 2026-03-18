@@ -121,6 +121,8 @@ else
         -cp /var/lib/cluster/config/hbase \
         -p table="$table" \
         -p columnfamily="$column_family"
+    log_info "Sleeping for 30 seconds to allow cluster to settle"
+    sleep 30
     log_info "Completed warm up"
 fi
 
@@ -135,6 +137,8 @@ while IFS="" read -r line || [ -n "$line" ]; do
         log_info "Updating configuration $config_name on node $node_ip"
         /var/lib/cluster/scripts/hbase/config_update.sh $options --target="$node_ip"
     done
+    log_info "Sleeping for 30 seconds to allow cluster to settle"
+    sleep 30
     log_info "Running workload $workload_name on configuration $config_name"
     output_dir="/var/lib/cluster/benchmarking/hbase/results/$workload_name"
     mkdir -p "$output_dir"
