@@ -127,21 +127,28 @@ fi
 config_count=$(wc -l "$hbase_configs")
 log_info "Running workload $run_workload for $config_count configurations"
 
-function configure_hbase() {
-    while IFS="" read -r line || [ -n "$line" ]; do
-        for node_ip in "${ALL_IPS[@]}"; do
-            /var/lib/cluster/scripts/hbase/config_update.sh $line --target="$node_ip"
-        done
-    done
-}
+workload_name=$(basename "$run_workload")
 
-sudo bin/ycsb run hbase2 \
-    -P "$run_workload" \
-    -s \
-    -cp /var/lib/cluster/config/hbase \
-    -p table="$table" \
-    -p columnfamily="$column_family" \
-    -p clientbuffering=true
+while IFS="" read -r line || [ -n "$line" ]; do
+    IFS=" " read -r config_name options <<< "$line"
+    for node_ip in "${NODE_IPS[@]}"; do
+        log_info "Updating configuration $config_name on node $node_ip"
+        /var/lib/cluster/scripts/hbase/config_update.sh $options --target="$node_ip"
+    done
+    log_info "Running workload $workload_name on configuration $config_name"
+    output_dir="/var/lib/cluster/benchmarking/hbase/results/$workload_name"
+    mkdir -p "$output_dir"
+    sudo bin/ycsb run hbase2 \
+        -P "$run_workload" \
+        -s \
+        -cp /var/lib/cluster/config/hbase \
+        -p table="$table" \
+        -p columnfamily="$column_family" \
+        -p clientbuffering=true \
+        -p exporter="site.ycsb.measurements.exporter.JSONArrayMeasurementsExporter" \
+        -p exportfile="$output_dir/$config_name.json"
+done < "$hbase_configs"
+
 log_info "Completed benchmarking"
 
 popd
