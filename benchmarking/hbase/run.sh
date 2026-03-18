@@ -126,6 +126,10 @@ else
     log_info "Completed warm up"
 fi
 
+log_info "Shuting down cluster"
+/var/lib/cluster/scripts/hbase/hbase.sh master stop --shutDownCluster
+sleep 20
+
 config_count=$(wc -l "$hbase_configs")
 log_info "Running workload $run_workload for $config_count configurations"
 
