@@ -132,8 +132,12 @@ if [ ! -z "$target" ]; then
         --handler_count="$handler_count"
     exit $?
 fi
-find_container_target "$EXEC_ABLE_CONTAINER_NAMES"
-container="$target"
+
+if [ -z "$container" ]; then
+    log_info "Finding container"
+    find_container_target "$EXEC_ABLE_CONTAINER_NAMES"
+    container="$target"
+fi
 
 log_info "Stopping container $container"
 sudo docker stop "$container"

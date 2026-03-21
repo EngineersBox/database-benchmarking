@@ -35,6 +35,10 @@ sudo apt-get install -y \
     maven \
     xmlstarlet
 
+log_info "Adding 'docker' group to $USER"
+sudo usermod -aG docker "$USER"
+newgrp "$USER"
+
 log_info "Creating venv for bootstrap"
 pushd /var/lib/cluster/init
 python3 -m venv .venv

@@ -155,6 +155,8 @@ while IFS="" read -r line || [ -n "$line" ]; do
         -p clientbuffering=true \
         -p exporter="site.ycsb.measurements.exporter.JSONArrayMeasurementsExporter" \
         -p exportfile="$output_dir/$config_name.json"
+    log_info "Sleeping for 60 seconds to allow cluster to settle"
+    sleep 60
 done < "$hbase_configs"
 
 log_info "Completed benchmarking"

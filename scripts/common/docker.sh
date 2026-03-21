@@ -11,7 +11,7 @@ set -o pipefail -o noclobber
 #  0: Otherwise
 function find_container_target() {
     local exec_able_container_names="$1"
-    container_names=$(docker ps --format "{{.Names}}")
+    container_names=$(sudo docker ps -a --format "{{.Names}}")
     readarray -t targets < <(comm -12 <(echo "$container_names" | sort) <(echo "$exec_able_container_names" | sort))
     if [ ${#targets[@]} -le 0 ]; then
         return 1
