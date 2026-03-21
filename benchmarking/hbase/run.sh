@@ -97,16 +97,18 @@ log_info "Sourcing node environment"
 source /var/lib/cluster/node_env
 
 pushd /var/lib/cluster
-set +e
 
-log_info "Creating HBase $table with even splits across all $region_server_count region servers"
-echo "n_splits = $((10 * region_server_count)); create '$table', '$column_family', {SPLITS => (1..n_splits).map {|i| \"user#{1000+i*(9999-1000)/n_splits}\"}}" | /var/lib/cluster/scripts/hbase/hbase_shell.sh -n
+log_info "Checking if HBase table $table already exists"
+echo -e "exists '$table';" | /var/lib/cluster/scripts/hbase/hbase_shell.sh -n | grep -q "does exist" 2>/dev/null
 table_exists=$?
 if [ "$table_exists" -ne 0 ]; then
     log_warn "Table $table already exists, skipping creation"
+else
+    log_info "Creating HBase $table with even splits across all $region_server_count region servers"
+    query="n_splits = $((10 * region_server_count)); create '$table', '$column_family', {SPLITS => (1..n_splits).map {|i| \"user#{1000+i*(9999-1000)/n_splits}\"}}"
+    echo -e "$query" | /var/lib/cluster/scripts/hbase/hbase_shell.sh -n
 fi
 
-set -e
 popd
 
 pushd /var/lib/cluster/ycsb
@@ -135,7 +137,11 @@ log_info "Running workload $run_workload for $config_count configurations"
 
 workload_name=$(basename "$run_workload")
 
-while IFS="" read -r line || [ -n "$line" ]; do
+while IFS="" read -r line; do
+    if [[ "$line" =~ ^# ]] || [[ "$line" =~ ^[[:blank:]]*$ ]]; then
+        # Skip blank and commented out lines
+        continue;
+    fi
     IFS=" " read -r config_name options <<< "$line"
     for node_ip in "${NODE_IPS[@]}"; do
         log_info "Updating configuration $config_name on node $node_ip"
