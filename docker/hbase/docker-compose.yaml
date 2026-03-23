@@ -12,7 +12,7 @@ services:
       - /var/lib/cluster/config/hbase/otel.properties:/etc/otel/otel.properties
       # Kairos
       - /var/lib/kairos:/var/lib/kairos
-    mem_limit: 16gb
+    mem_limit: 20gb
     memswap_limit: 16gb
     mem_swappiness: 0
     ports:
@@ -44,8 +44,8 @@ services:
       - /var/lib/cluster/config/hbase/otel.properties:/etc/otel/otel.properties
       # Kairos
       - /var/lib/kairos:/var/lib/kairos
-    mem_limit: 16gb
-    memswap_limit: 16gb
+    mem_limit: 20gb
+    memswap_limit: 20gb
     mem_swappiness: 0
     ports:
       - 2181:2181
@@ -75,8 +75,8 @@ services:
       - /var/lib/cluster/config/hbase/otel.properties:/etc/otel/otel.properties
       # Kairos
       - /var/lib/kairos:/var/lib/kairos
-    mem_limit: 16gb
-    memswap_limit: 16gb
+    mem_limit: 20gb
+    memswap_limit: 20gb
     mem_swappiness: 0
     ports:
       - 16020:16020
@@ -109,8 +109,8 @@ services:
       - /var/lib/cluster/config/hbase/otel.properties:/etc/otel/otel.properties
       # Kairos
       - /var/lib/kairos:/var/lib/kairos
-    mem_limit: 16gb
-    memswap_limit: 16gb
+    mem_limit: 20gb
+    memswap_limit: 20gb
     mem_swappiness: 0
     ports:
       - 16000:16000
