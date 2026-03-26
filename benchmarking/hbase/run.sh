@@ -152,6 +152,7 @@ while IFS="" read -r line; do
     log_info "Running workload $workload_name on configuration $config_name"
     output_dir="/var/lib/cluster/benchmarking/hbase/results/$workload_name"
     mkdir -p "$output_dir"
+    timestamp=$(date +"%Y-%m-%d_%T.%3N")
     sudo bin/ycsb run hbase2 \
         -P "$run_workload" \
         -s \
@@ -160,7 +161,7 @@ while IFS="" read -r line; do
         -p columnfamily="$column_family" \
         -p clientbuffering=true \
         -p exporter="site.ycsb.measurements.exporter.JSONArrayMeasurementsExporter" \
-        -p exportfile="$output_dir/$config_name.json"
+        -p exportfile="$output_dir/${config_name}_${timestamp}.json"
     log_info "Sleeping for 60 seconds to allow cluster to settle"
     sleep 60
 done < "$hbase_configs"

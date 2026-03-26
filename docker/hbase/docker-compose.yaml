@@ -13,7 +13,7 @@ services:
       # Kairos
       - /var/lib/kairos:/var/lib/kairos
     mem_limit: 20gb
-    memswap_limit: 16gb
+    memswap_limit: 20gb
     mem_swappiness: 0
     ports:
       - 16000:16000

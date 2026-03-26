@@ -56,7 +56,7 @@
     <property>
     <!-- Default: true -->
         <name>hbase.ipc.client.tcpnodelay</name>
-        <value>true</name>
+        <value>true</value>
     </property>
     <property>
     <!-- Default: 0.4 -->
@@ -66,7 +66,7 @@
     <property>
     <!-- Default: 0.95 -->
         <name>hbase.regionserver.global.memstore.size.lower.limit</name>
-        <value0.95</value>
+        <value>0.95</value>
     </property>
     <property>
         <name>hbase.hregion.memstore.flush.size</name>
