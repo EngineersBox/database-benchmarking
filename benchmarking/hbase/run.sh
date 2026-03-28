@@ -11,8 +11,8 @@ function on_error() {
     log_fatal "Failed to run benchmarking for HBase"
 }
 
-set -o errexit -o pipefail -o noclobber
-trap on_error ERR
+set -o pipefail -o noclobber
+# trap on_error ERR
 
 function print_help() {
     log_info "Usage: hbase/run.sh <required> [<options>]"
