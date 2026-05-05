@@ -59,8 +59,9 @@ sudo sed -i "s%@@JAVA_HOME@@%$java_home%g" /var/lib/hadoop/etc/hadoop/hadoop-env
 sudo chown -R hadoop:hadoop /var/lib/hadoop
 
 # Create directories for data
-sudo mkdir -p /home/hadoop/hdfs/{name,data,namesecondary}
-sudo chown -R hadoop:hadoop /home/hadoop/hdfs
+sudo mkdir -p /home/hadoop
+sudo mkdir -p /data/hadoop/hdfs/{name,data,namesecondary}
+sudo chown -R hadoop:hadoop /home/hadoop /data/hadoop/hdfs
 
 cat << EOF | sudo tee -a /home/hadoop/.bashrc /home/hadoop/.hadoop_env
 export HADOOP_HOME=/var/lib/hadoop
