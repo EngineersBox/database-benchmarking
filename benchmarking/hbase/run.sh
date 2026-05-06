@@ -101,7 +101,7 @@ pushd /var/lib/cluster
 log_info "Checking if HBase table $table already exists"
 echo -e "exists '$table';" | /var/lib/cluster/scripts/hbase/hbase_shell.sh -n | grep -q "does exist" 2>/dev/null
 table_exists=$?
-if [ "$table_exists" -ne 0 ]; then
+if [ "$table_exists" -eq 0 ]; then
     log_warn "Table $table already exists, skipping creation"
 else
     log_info "Creating HBase $table with even splits across all $region_server_count region servers"
